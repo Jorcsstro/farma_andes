@@ -1,0 +1,8 @@
+<svg width="320" height="220" viewBox="0 0 320 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M116 55C116 43 126 34 138 34H182C194 34 204 43 204 55V65H116V55Z" fill="#0d2d72"/>
+  <rect x="98" y="61" width="124" height="132" rx="24" fill="#edf6ff" stroke="#c7dcff" stroke-width="7"/>
+  <path d="M104 103H216" stroke="#153f98" stroke-width="28"/>
+  <path d="M132 146H188" stroke="#ff7a00" stroke-width="14" stroke-linecap="round"/>
+  <path d="M143 166H177" stroke="#c8d8f4" stroke-width="10" stroke-linecap="round"/>
+  <text x="122" y="99" fill="white" font-family="Arial, sans-serif" font-size="20" font-weight="900">ANTIOX</text>
+</svg>

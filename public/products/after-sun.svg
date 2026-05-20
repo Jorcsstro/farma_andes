@@ -1,0 +1,8 @@
+<svg width="320" height="220" viewBox="0 0 320 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="124" y="35" width="72" height="26" rx="10" fill="#153f98"/>
+  <rect x="105" y="56" width="110" height="140" rx="34" fill="#fff9f0" stroke="#ffd39a" stroke-width="7"/>
+  <path d="M111 98H209" stroke="#ff7a00" stroke-width="30"/>
+  <path d="M126 139C146 120 174 120 194 139" stroke="#153f98" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="160" cy="107" r="17" fill="#ffe247"/>
+  <text x="123" y="168" fill="#153f98" font-family="Arial, sans-serif" font-size="18" font-weight="900">AFTER SUN</text>
+</svg>

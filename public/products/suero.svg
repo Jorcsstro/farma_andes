@@ -1,0 +1,8 @@
+<svg width="320" height="220" viewBox="0 0 320 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="82" y="42" width="156" height="142" rx="20" fill="#ffffff" stroke="#d9e7ff" stroke-width="6"/>
+  <path d="M82 78H238" stroke="#153f98" stroke-width="20"/>
+  <path d="M108 120H212" stroke="#ff7a00" stroke-width="13" stroke-linecap="round"/>
+  <path d="M108 145H184" stroke="#c8d8f4" stroke-width="10" stroke-linecap="round"/>
+  <path d="M219 37L239 57M81 37L101 57M80 189L99 170M239 189L220 170" stroke="#ff9b26" stroke-width="7" stroke-linecap="round"/>
+  <text x="110" y="73" fill="white" font-family="Arial, sans-serif" font-size="18" font-weight="900">SUERO ORAL</text>
+</svg>
