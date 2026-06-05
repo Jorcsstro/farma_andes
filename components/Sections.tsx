@@ -58,7 +58,7 @@ export function OfertasYHorarios() {
               <article className="deal" key={product.id}>
                 <small>{product.categoria}</small>
                 <b>{product.nombre}</b>
-                <strong>{formatCLP(product.precio)}</strong>
+                <strong>{product.precio > 0 ? formatCLP(product.precio) : "Consultar"}</strong>
               </article>
             ))}
           </div>

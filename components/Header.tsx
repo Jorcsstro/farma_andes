@@ -32,7 +32,7 @@ export function Header() {
 
       <header>
         <div className="container nav">
-          <a href="#inicio" aria-label="Farmacia Andes inicio">
+          <a href="#catalogo" aria-label="Farmacia Andes inicio">
             <Logo />
           </a>
 

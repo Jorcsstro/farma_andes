@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { formatCLP } from "@/lib/format";
 import { buildProductWhatsappUrl } from "@/lib/whatsapp";
 import type { Product, StockEstado } from "@/types/product";
@@ -15,12 +16,15 @@ type ProductCardProps = {
 export function ProductCard({ product }: ProductCardProps) {
   const stock = stockCopy[product.stockEstado];
   const whatsappUrl = buildProductWhatsappUrl(product);
+  const hasPrice = product.precio > 0;
 
   return (
     <article className="product-card">
       <div className="product-media">
-        <img src={product.imagenUrl} alt="" aria-hidden="true" />
-        {product.destacado && <span className="floating-badge">Oferta</span>}
+        <Image src={product.imagenUrl} alt="" width={220} height={170} aria-hidden="true" />
+        {product.destacado && (
+          <span className="floating-badge">{product.precioAnterior ? "Oferta" : "Destacado"}</span>
+        )}
       </div>
 
       <div className="product-body">
@@ -46,10 +50,10 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <div className="product-bottom">
           <div>
-            {product.precioAnterior && (
+            {hasPrice && product.precioAnterior && (
               <span className="old-price">{formatCLP(product.precioAnterior)}</span>
             )}
-            <strong className="product-price">{formatCLP(product.precio)}</strong>
+            <strong className="product-price">{hasPrice ? formatCLP(product.precio) : "Consultar"}</strong>
           </div>
           <a className="btn btn-product" href={whatsappUrl} target="_blank" rel="noopener noreferrer">
             WhatsApp
