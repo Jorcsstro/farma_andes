@@ -92,26 +92,112 @@ section {
 
 .top-bar {
   position: relative;
-  z-index: 20;
-  color: #fff;
-  font-size: 13px;
-  background: linear-gradient(90deg, var(--azul-2), var(--azul));
+  z-index: 40;
+  background:
+    linear-gradient(90deg, #061b49 0%, #082a6f 48%, #06336f 100%);
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: 0.88rem;
+}
+
+.top-bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 12% 50%, rgba(255, 122, 0, 0.18), transparent 26%),
+    radial-gradient(circle at 85% 50%, rgba(47, 120, 255, 0.22), transparent 30%);
+  pointer-events: none;
 }
 
 .top-bar-inner {
+  position: relative;
+  min-height: 42px;
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 10px 0;
 }
 
-.top-pills {
+.top-info-group {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
+}
+
+.top-info-right {
+  justify-content: flex-end;
+}
+
+.top-info-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(255, 255, 255, 0.92);
+  text-decoration: none;
+  font-weight: 600;
+  line-height: 1;
+  padding: 7px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(10px);
+  transition: 0.2s ease;
+}
+
+.top-info-item:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 122, 0, 0.45);
+  transform: translateY(-1px);
+}
+
+.top-icon {
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 122, 0, 0.16);
+  font-size: 0.78rem;
+  flex: 0 0 auto;
+}
+
+@media (max-width: 900px) {
+  .top-bar-inner {
+    justify-content: center;
+    flex-direction: column;
+    padding: 8px 0;
+    gap: 8px;
+  }
+
+  .top-info-group,
+  .top-info-right {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 560px) {
+  .top-bar {
+    font-size: 0.78rem;
+  }
+
+  .top-info-group {
+    width: 100%;
+    gap: 6px;
+  }
+
+  .top-info-item {
+    padding: 7px 9px;
+  }
+
+  .top-info-item span:last-child {
+    max-width: 230px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 .pill-mini {
@@ -412,19 +498,6 @@ h1 {
   background-size: cover;
   background-position: center right;
   opacity: 1;
-}
-
-.catalog-section::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    url("/identidad-visual/04%20Isotipo%20Blanco%20Azul.png") no-repeat right 7% top 13% / min(34vw, 420px),
-    linear-gradient(180deg, rgba(255, 122, 0, 0.16) 0%, rgba(255, 122, 0, 0) 34%),
-    linear-gradient(180deg, rgba(244, 247, 255, 0) 78%, rgba(244, 247, 255, 0.94) 100%);
-  opacity: 0.9;
 }
 
 .catalog-section .section-kicker {
@@ -1031,7 +1104,7 @@ h1 {
 .product-showcase {
   position: relative;
   overflow: hidden;
-  padding: 74px 0 64px;
+  padding: 40px 0 40px;
   background:
     radial-gradient(circle at 12% 18%, rgba(255, 122, 0, 0.11), transparent 28%),
     linear-gradient(180deg, #f4f7ff 0%, #ffffff 100%);

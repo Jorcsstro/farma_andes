@@ -109,61 +109,7 @@ export function OfertasYHorarios() {
   );
 }
 
-export function Experiencia() {
-  return (
-    <section id="experiencia">
-      <div className="container experience">
-        <div className="andes-card reveal">
-          <div className="andes-illustration" aria-hidden="true">
-            <div className="sun" />
-            <div className="mountain" />
-            <div className="orange-river" />
-          </div>
-          <div className="andes-copy">
-            <h2>Identidad visual inspirada en Andes.</h2>
-            <p>
-              Azul profundo para confianza, naranjo para energia y cercania, formas de montana y
-              cruces medicos como patron visual distintivo.
-            </p>
-          </div>
-        </div>
 
-        <div className="steps reveal">
-          {[
-            {
-              title: "Atencion rapida por WhatsApp",
-              text:
-                "Botones preparados para que el cliente consulte productos, ofertas, turnos y disponibilidad sin perder tiempo."
-            },
-            {
-              title: "Datos listos para Supabase",
-              text:
-                "Los productos viven en archivos separados con el mismo contrato que luego puede mapearse a tablas reales."
-            },
-            {
-              title: "Diseno memorable",
-              text:
-                "Integra colores corporativos, movimiento, tarjetas flotantes y una estetica cercana sin verse como plantilla generica."
-            },
-            {
-              title: "Preparada para campanas",
-              text:
-                "Ideal para verano, invierno, vendimia, turnos y promociones semanales sin prometer inventario automatico."
-            }
-          ].map((step, index) => (
-            <article className="step" key={step.title}>
-              <div className="num">{String(index + 1).padStart(2, "0")}</div>
-              <div>
-                <h3>{step.title}</h3>
-                <p>{step.text}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
 
 export function Contacto() {
   return (

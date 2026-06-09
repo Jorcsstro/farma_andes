@@ -18,17 +18,40 @@ export function Header() {
   return (
     <>
       <div className="top-bar">
-        <div className="container top-bar-inner">
-          <div className="top-pills">
-            <span className="pill-mini">Cardenal Caro 510, San Fernando</span>
-            <span className="pill-mini">{farmacia.horarioPrincipal}</span>
-          </div>
-          <div className="top-pills">
-            <span className="pill-mini">{farmacia.telefono}</span>
-            <span className="pill-mini">Instagram: {farmacia.instagram}</span>
-          </div>
-        </div>
-      </div>
+  <div className="container top-bar-inner">
+    <div className="top-info-group">
+      <a
+        className="top-info-item"
+        href={farmacia.mapaUrl}
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Ver ubicación de Farmacia Andes"
+      >
+        <span className="top-icon">📍</span>
+        <span>{farmacia.direccion}</span>
+      </a>
+
+      <span className="top-info-item">
+        <span className="top-icon">🕘</span>
+        <span>{farmacia.horarioPrincipal}</span>
+      </span>
+    </div>
+
+    <div className="top-info-group top-info-right">
+
+      <a
+        className="top-info-item"
+        href="https://www.instagram.com/farmacia_andes_/"
+        target="_blank"
+        rel="noreferrer"
+        aria-label="Instagram de Farmacia Andes"
+      >
+        <span className="top-icon">📸</span>
+        <span>{farmacia.instagram}</span>
+      </a>
+    </div>
+  </div>
+</div>
 
       <header>
         <div className="container nav">
