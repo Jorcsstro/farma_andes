@@ -18,6 +18,9 @@ IMAGE_BY_CATEGORY = {
     "Dermocosmética": "/products/crema.svg",
     "Cuidado familiar": "/products/suero.svg",
     "Higiene": "/products/alcohol-gel.svg",
+    "Veterinaria": "/products/receta.svg",
+    "Accesorios": "/products/suero.svg",
+    "Homeopatía": "/products/suero.svg",
 }
 
 PRESCRIPTION_TERMS = (
@@ -25,6 +28,75 @@ PRESCRIPTION_TERMS = (
     "DOXI", "METRONID", "CLIND", "TRAMADOL", "CLONAZ", "ALPRAZ", "DIAZEP",
     "PREGAB", "QUETIA", "SERTRAL", "FLUOX", "PAROX", "ESCITAL", "VENLAF",
     "LOSARTAN", "ENALAPRIL", "METFORM", "GLIBEN", "INSUL", "PREDN",
+)
+
+LOWERCASE_WORDS = {
+    "bioequivalente",
+    "bloqueador",
+    "cápsula",
+    "cápsulas",
+    "comprimido",
+    "comprimidos",
+    "con",
+    "crema",
+    "dermatológico",
+    "gramo",
+    "gramos",
+    "gotas",
+    "jarabe",
+    "mililitro",
+    "mililitros",
+    "oftálmica",
+    "oftálmico",
+    "oral",
+    "para",
+    "polvo",
+    "recubiertos",
+    "sin",
+    "solar",
+    "solución",
+    "sublingual",
+    "suspensión",
+    "ungüento",
+    "vaginal",
+}
+
+UPPERCASE_WORDS = {"ADN", "FPS", "NF", "SPF", "UI", "XR", "LP"}
+
+UNIT_WORDS = {
+    "G": "g",
+    "GR": "g",
+    "GM": "mg",
+    "IU": "UI",
+    "L": "l",
+    "MCG": "mcg",
+    "MG": "mg",
+    "ML": "ml",
+}
+
+ABBREVIATION_REPLACEMENTS = (
+    (r"\(VET\)", "Veterinario"),
+    (r"\bB\s*E\b", "bioequivalente"),
+    (r"\bCOM\s*REC\b|\bCOMREC\b|\bCOMRE\b", "comprimidos recubiertos"),
+    (r"\bCOMP?\b", "comprimidos"),
+    (r"\bCAPS?\b", "cápsulas"),
+    (r"\bJBE\b", "jarabe"),
+    (r"\bPVO\s+JARABE\b|\bPVO\s+JBE\b", "polvo para jarabe"),
+    (r"\bPVO\b", "polvo"),
+    (r"\bSUSP\b", "suspensión"),
+    (r"\bSOL\s+OFT\b|\bSOL\s+OF\b", "solución oftálmica"),
+    (r"\bSOL\b", "solución"),
+    (r"\bGTS\b", "gotas"),
+    (r"\bBL\b", "blíster"),
+    (r"\bUNG\b", "ungüento"),
+    (r"\bCR\s+VAG\b", "crema vaginal"),
+    (r"\bCR\b", "crema"),
+    (r"\bDER\b", "dermatológico"),
+    (r"\bCOMP\s+SUBL\b|\bSUBL\b", "sublingual"),
+    (r"\bBLOQ\s+SP\b|\bBLOQ\b", "bloqueador solar"),
+    (r"\bFOTOPROT\b", "fotoprotector"),
+    (r"\bAC\s+ACETIL\b", "Ácido acetilsalicílico"),
+    (r"\bAC\b", "Ácido"),
 )
 
 
@@ -111,14 +183,137 @@ def clean_text(value: str) -> str:
     return value
 
 
-def infer_category(name: str) -> str:
+def smart_case(value: str) -> str:
+    words: list[str] = []
+
+    for raw_word in value.split():
+        word = raw_word.strip()
+        if not word:
+            continue
+
+        prefix = ""
+        suffix = ""
+        while word and word[0] in "([{":
+            prefix += word[0]
+            word = word[1:]
+        while word and word[-1] in ")]},":
+            suffix = word[-1] + suffix
+            word = word[:-1]
+
+        normalized_core = normalize_key(word)
+        lower_word = word.lower()
+
+        if normalized_core in UNIT_WORDS:
+            cased = UNIT_WORDS[normalized_core]
+        elif normalized_core in UPPERCASE_WORDS:
+            cased = normalized_core
+        elif normalized_core == "X" and lower_word == "x":
+            cased = "x"
+        elif lower_word in LOWERCASE_WORDS:
+            cased = lower_word
+        elif re.fullmatch(r"\d+(?:[,.]\d+)?%?", word):
+            cased = word
+        elif re.search(r"\d", word) and re.search(r"[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]", word):
+            cased = word.upper() if len(word) <= 4 else word.capitalize()
+        else:
+            cased = lower_word.capitalize()
+
+        words.append(f"{prefix}{cased}{suffix}")
+
+    return clean_text(" ".join(words))
+
+
+def expand_units(value: str) -> str:
+    text = value
+    text = re.sub(r"(?<=\d)\.(?=\d)", ",", text)
+    text = re.sub(r"(?<=\d)\s*(MG|MCG|ML|GR|GM|G|L|UI|IU)\b", r" \1", text, flags=re.IGNORECASE)
+    text = re.sub(
+        r"\b(MG|MCG|ML|GR|GM|G|L|UI|IU)\s*(?=\d)",
+        lambda match: f"{UNIT_WORDS.get(match.group(1).upper(), match.group(1).lower())} ",
+        text,
+        flags=re.IGNORECASE,
+    )
+    text = re.sub(r"\b(\d+(?:[,.]\d+)?)\s*GM\b", r"\1 MG", text, flags=re.IGNORECASE)
+    return text
+
+
+def normalize_medical_text(value: str) -> str:
+    text = clean_text(value)
+    if not text:
+        return ""
+
+    text = text.replace("ÁCIDO", "ACIDO").replace("Ácido", "Acido")
+    text = re.sub(r"\bC/", "con ", text, flags=re.IGNORECASE)
+    text = re.sub(r"\bS/", "sin ", text, flags=re.IGNORECASE)
+    text = expand_units(text)
+    text = text.replace("+", " + ")
+    text = text.replace(".", " ")
+    text = re.sub(r"([A-Za-zÁÉÍÓÚÜÑáéíóúüñ])(\d)", r"\1 \2", text)
+    text = re.sub(
+        r"(\d)(COMREC|COMRE|COM|COMP|CAPS|CAP|SOB|AMP|UN|DS)\b",
+        r"\1 \2",
+        text,
+        flags=re.IGNORECASE,
+    )
+
+    for pattern, replacement in ABBREVIATION_REPLACEMENTS:
+        text = re.sub(pattern, replacement, text, flags=re.IGNORECASE)
+
+    text = re.sub(r"\s*/\s*", " / ", text)
+    text = clean_text(text)
+    text = text.replace("Acido", "Ácido").replace("ACIDO", "Ácido")
+    result = smart_case(text).replace(" / ", "/")
+    result = result.replace("Capsula", "Cápsula").replace("capsula", "cápsula")
+    result = re.sub(r"\b1 comprimidos\b", "1 comprimido", result, flags=re.IGNORECASE)
+    result = re.sub(r"\b1 cápsulas\b", "1 cápsula", result, flags=re.IGNORECASE)
+    return result[:1].upper() + result[1:] if result else result
+
+
+def normalized_lookup(value: str) -> str:
+    text = normalize_key(value)
+    return re.sub(r"(MG|MCG|ML|GR|GM|G|L|UI|IU|COM|COMP|CAPS|CAP|SOB|AMP)$", "", text)
+
+
+def active_is_in_name(active: str, name: str) -> bool:
+    active_words = [
+        normalized_lookup(word)
+        for word in re.split(r"[\s,/()+-]+", active)
+        if len(normalized_lookup(word)) >= 5
+    ]
+    name_key = normalized_lookup(name)
+    return any(word and word in name_key for word in active_words[:3])
+
+
+def normalize_product_name(name: str, active: str) -> str:
+    product_name = normalize_medical_text(name)
+    active_name = normalize_medical_text(active)
+
+    if active_name and not active_is_in_name(active_name, product_name):
+        return f"{product_name} ({active_name})"
+
+    return product_name
+
+
+def infer_category(name: str, department: str = "") -> str:
     upper = name.upper()
+    department_key = normalize_key(department)
+
     if any(term in upper for term in ("FPS", "SOLAR", "BLOQ", "SUN", "FOTOPROT")):
         return "Protección solar"
-    if any(term in upper for term in ("CREMA", "DERM", "LOCION", "LOCIÓN", "SHAMPOO", "ACOND", "SERUM", "BALSAMO", "UNG", "POMADA")):
-        return "Dermocosmética"
+    if department_key == "VETERINARIA":
+        return "Veterinaria"
+    if department_key == "ACCESORIOS":
+        return "Accesorios"
+    if department_key == "HOMEOPATIAHMEDICINALES":
+        return "Homeopatía"
+    if department_key in {"ALIMENTOS", "AGUASYBEBIDAS"}:
+        return "Cuidado familiar"
     if any(term in upper for term in ("ALCOHOL", "JABON", "JABÓN", "TOALLA", "PAÑAL", "DESOD", "PASTA DENT", "CEPILLO", "ENJUAG")):
         return "Higiene"
+    if department_key in {"PERFUMERIA", "ASEOPERSONAL"}:
+        return "Dermocosmética"
+    if any(term in upper for term in ("CREMA", "DERM", "LOCION", "LOCIÓN", "SHAMPOO", "ACOND", "SERUM", "BALSAMO", "UNG", "POMADA")):
+        return "Dermocosmética"
     if any(term in upper for term in ("VIT", "BIOTINA", "ZINC", "OMEGA", "MAGNES", "CALCIO", "SUPLEMENT", "SUERO", "ELECTROL")):
         return "Cuidado familiar"
     return "Medicamentos"
@@ -134,16 +329,33 @@ def infer_format(name: str) -> str:
     for pattern in patterns:
         match = re.search(pattern, upper)
         if match:
-            return clean_text(match.group(0).replace(".", " "))
+            return normalize_medical_text(match.group(0).replace(".", " "))
     return "Formato a consultar"
 
 
-def stock_status(stock: int) -> str:
-    if stock <= 0:
-        return "agotado"
-    if stock <= 3:
-        return "consultar"
-    return "disponible"
+def presentation_label(units: str, presentation: str, fallback_name: str) -> str:
+    unit_value = clean_text(units)
+    presentation_value = normalize_medical_text(presentation)
+
+    if unit_value:
+        try:
+            number = float(unit_value.replace(",", "."))
+            unit_value = str(int(number)) if number.is_integer() else str(number).replace(".", ",")
+        except ValueError:
+            pass
+
+    if unit_value and presentation_value:
+        singular = unit_value in {"1", "1,0"}
+        label = presentation_value.lower()
+        if not singular and label == "comprimido":
+            label = "comprimidos"
+        elif singular and label == "capsula":
+            label = "cápsula"
+        elif not singular and label in {"cápsula", "capsula"}:
+            label = "cápsulas"
+        return smart_case(f"{unit_value} {label}")
+
+    return infer_format(fallback_name)
 
 
 def requires_prescription(name: str) -> bool:
@@ -151,13 +363,34 @@ def requires_prescription(name: str) -> bool:
     return any(term in upper for term in PRESCRIPTION_TERMS)
 
 
-def product_description(category: str, stock: int) -> str:
-    if stock <= 0:
-        return "Producto en catálogo de Farmacia Andes. Consulta alternativas y nueva disponibilidad por WhatsApp."
-    return (
-        f"Producto disponible en Farmacia Andes. Stock referencial: {stock} "
-        "unidades. Confirma disponibilidad y orientación de compra por WhatsApp."
-    )
+def parse_price(value: str) -> int:
+    cleaned = re.sub(r"[^0-9,.-]+", "", value).strip()
+    if not cleaned:
+        return 0
+
+    if "," in cleaned and "." in cleaned:
+        cleaned = cleaned.replace(".", "").replace(",", ".")
+    elif "," in cleaned:
+        cleaned = cleaned.replace(",", ".")
+
+    try:
+        return int(round(float(cleaned)))
+    except ValueError:
+        return 0
+
+
+def product_description(therapeutic_action: str, presentation: str, requires_recipe: bool) -> str:
+    parts: list[str] = []
+    action = normalize_medical_text(therapeutic_action)
+
+    if action:
+        parts.append(f"{action}.")
+    if presentation:
+        parts.append(f"Presentación: {presentation}.")
+    parts.append("Venta con receta médica." if requires_recipe else "Venta directa o según indicación profesional.")
+    parts.append("Precio referencial del listado vigente; confirma disponibilidad por WhatsApp.")
+
+    return " ".join(parts)
 
 
 def build_products(rows: list[list[str]]) -> list[dict[str, object]]:
@@ -176,19 +409,28 @@ def build_products(rows: list[list[str]]) -> list[dict[str, object]]:
 
     for row in rows[1:]:
         raw_id = cell(row, "ID")
-        name = cell(row, "DESCRIPCIÓN", "DESCRIPCION")
-        brand = cell(row, "LÍNEA", "LINEA") or "Farmacia Andes"
-        stock_raw = cell(row, "STOCK")
-        if not name:
+        raw_name = cell(row, "PRODUCTO", "DESCRIPCIÓN", "DESCRIPCION")
+        active = cell(row, "PRINCIPIO ACTIVO")
+        brand = cell(row, "LABORATORIO", "LÍNEA", "LINEA") or "Farmacia Andes"
+        department = cell(row, "DEPARTAMENTO")
+        therapeutic_action = cell(row, "ACCIÓN TERAPÉUTICA", "ACCION TERAPEUTICA")
+        presentation = presentation_label(
+            cell(row, "UNIDADES PRESENTACIÓN", "UNIDADES PRESENTACION"),
+            cell(row, "PRESENTACIÓN", "PRESENTACION"),
+            raw_name,
+        )
+        recipe = cell(row, "RECETA MÉDICA", "RECETA MEDICA")
+        control_legal = cell(row, "CONTROL LEGAL")
+
+        if not raw_name:
             continue
 
-        try:
-            stock = int(float(stock_raw.replace(",", "."))) if stock_raw else 0
-        except ValueError:
-            stock = 0
+        name = normalize_product_name(raw_name, active)
+        requires_recipe = "RECETA" in normalize_key(recipe) or bool(control_legal)
+        category = infer_category(raw_name, department)
 
-        category = infer_category(name)
         base_id = f"prod-{raw_id}" if raw_id else slugify(name)
+        base_id = base_id.replace(".0", "")
         product_id = base_id
         suffix = 2
         while product_id in used_ids:
@@ -202,13 +444,12 @@ def build_products(rows: list[list[str]]) -> list[dict[str, object]]:
                 "nombre": name,
                 "categoria": category,
                 "marca": brand,
-                "descripcionCorta": product_description(category, stock),
-                "precio": 0,
-                "stockEstado": stock_status(stock),
-                "requiereReceta": requires_prescription(name),
-                "destacado": len(products) < 6 and stock > 0,
-                "imagenUrl": IMAGE_BY_CATEGORY[category],
-                "formato": infer_format(name),
+                "descripcionCorta": product_description(therapeutic_action, presentation, requires_recipe),
+                "precio": parse_price(cell(row, "PRECIO")),
+                "requiereReceta": requires_recipe or requires_prescription(name),
+                "destacado": len(products) < 6,
+                "imagenUrl": IMAGE_BY_CATEGORY.get(category, "/products/receta.svg"),
+                "formato": presentation,
             }
         )
     return products
@@ -232,6 +473,8 @@ def main() -> int:
     print(f"Imported {len(products)} products into {target}")
     categories = sorted({str(product["categoria"]) for product in products})
     print("Categories: " + ", ".join(categories))
+    priced = sum(1 for product in products if int(product["precio"]) > 0)
+    print(f"Products with prices: {priced}")
     return 0
 
 

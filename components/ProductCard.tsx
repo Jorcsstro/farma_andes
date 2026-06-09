@@ -1,27 +1,30 @@
 import Image from "next/image";
 import { formatCLP } from "@/lib/format";
+import { getProductImageUrl } from "@/lib/product-image-overrides";
 import { buildProductWhatsappUrl } from "@/lib/whatsapp";
-import type { Product, StockEstado } from "@/types/product";
-
-const stockCopy: Record<StockEstado, { label: string; className: string }> = {
-  disponible: { label: "Disponible", className: "stock-available" },
-  consultar: { label: "Consultar stock", className: "stock-check" },
-  agotado: { label: "Agotado", className: "stock-out" }
-};
+import type { Product } from "@/types/product";
 
 type ProductCardProps = {
   product: Product;
 };
 
 export function ProductCard({ product }: ProductCardProps) {
-  const stock = stockCopy[product.stockEstado];
   const whatsappUrl = buildProductWhatsappUrl(product);
   const hasPrice = product.precio > 0;
+  const imageUrl = getProductImageUrl(product);
+  const isExternalImage = imageUrl.startsWith("http");
 
   return (
     <article className="product-card">
       <div className="product-media">
-        <Image src={product.imagenUrl} alt="" width={220} height={170} aria-hidden="true" />
+        <Image
+          src={imageUrl}
+          alt=""
+          width={220}
+          height={170}
+          aria-hidden="true"
+          unoptimized={isExternalImage}
+        />
         {product.destacado && (
           <span className="floating-badge">{product.precioAnterior ? "Oferta" : "Destacado"}</span>
         )}
@@ -38,10 +41,6 @@ export function ProductCard({ product }: ProductCardProps) {
         <p className="product-description">{product.descripcionCorta}</p>
 
         <div className="product-tags" aria-label="Etiquetas del producto">
-          <span className="tag tag-stock">
-            <i className={stock.className} aria-hidden="true" />
-            {stock.label}
-          </span>
           <span className={`tag ${product.requiereReceta ? "tag-prescription" : "tag-free"}`}>
             {product.requiereReceta ? "Requiere receta" : "Venta libre"}
           </span>

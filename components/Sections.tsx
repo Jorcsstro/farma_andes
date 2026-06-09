@@ -1,31 +1,42 @@
+import Image from "next/image";
 import { featuredProducts } from "@/data/products";
-import { farmacia, horarios, servicios } from "@/data/site";
+import { farmacia, horarios } from "@/data/site";
 import { formatCLP } from "@/lib/format";
 
 export function Servicios() {
-  return (
-    <section id="servicios">
-      <div className="container">
-        <div className="section-head reveal">
-          <h2>Más que vender productos: acompañamos tu cuidado.</h2>
-          <p>
-            Una web pensada para crecer: hoy informa y conecta por WhatsApp, mañana puede sumar
-            productos reales desde Supabase, campañas y administración simple.
-          </p>
-        </div>
+  const requestUrl = `https://wa.me/${farmacia.whatsapp}?text=${encodeURIComponent(
+    "Hola Farmacia Andes, quiero solicitar un producto que no encontre en la tienda."
+  )}`;
 
-        <div className="cards">
-          {servicios.map((item, index) => (
-            <article
-              className="service-card reveal"
-              key={item.titulo}
-              style={{ transitionDelay: `${index * 80}ms` }}
-            >
-              <div className="icon">{item.icono}</div>
-              <h3>{item.titulo}</h3>
-              <p>{item.texto}</p>
-            </article>
-          ))}
+  return (
+    <section className="request-products-section" id="servicios">
+      <div className="container request-products">
+        <div className="request-products-banner reveal">
+          <Image
+            src="/sections/farmacia-andes-banner-logo.png"
+            alt="No encontraste lo que buscas? Farmacia Andes lo revisa contigo."
+            width={1916}
+            height={821}
+            sizes="(max-width: 768px) 100vw, 1180px"
+            priority={false}
+          />
+
+          <a
+            className="request-banner-hotspot request-banner-whatsapp"
+            href={requestUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Solicitar producto por WhatsApp"
+          >
+            <span className="sr-only">Solicitar por WhatsApp</span>
+          </a>
+          <a
+            className="request-banner-hotspot request-banner-catalog"
+            href="#catalogo"
+            aria-label="Volver al catalogo"
+          >
+            <span className="sr-only">Volver al catalogo</span>
+          </a>
         </div>
       </div>
     </section>
@@ -39,7 +50,7 @@ export function OfertasYHorarios() {
         <div className="offer-main reveal">
           <h3>Ofertas claras, visuales y listas para consultar.</h3>
           <p>
-            Destaca productos de temporada, promociones por categoría y llamados directos a
+            Destaca productos de temporada, promociones por categoria y llamados directos a
             WhatsApp sin implementar pagos online en esta primera etapa.
           </p>
           <a
@@ -80,8 +91,8 @@ export function OfertasYHorarios() {
           <div className="contact-card">
             <h3>Compra simple</h3>
             <p>
-              Envía tu consulta, receta o foto del producto. El equipo puede confirmar stock,
-              precio y alternativa disponible.
+              Envia tu consulta, receta o foto del producto. El equipo puede confirmar precio,
+              disponibilidad y alternativa disponible.
             </p>
             <a
               className="btn btn-blue"
@@ -111,8 +122,8 @@ export function Experiencia() {
           <div className="andes-copy">
             <h2>Identidad visual inspirada en Andes.</h2>
             <p>
-              Azul profundo para confianza, naranjo para energía y cercanía, formas de montaña y
-              cruces médicos como patrón visual distintivo.
+              Azul profundo para confianza, naranjo para energia y cercania, formas de montana y
+              cruces medicos como patron visual distintivo.
             </p>
           </div>
         </div>
@@ -120,7 +131,7 @@ export function Experiencia() {
         <div className="steps reveal">
           {[
             {
-              title: "Atención rápida por WhatsApp",
+              title: "Atencion rapida por WhatsApp",
               text:
                 "Botones preparados para que el cliente consulte productos, ofertas, turnos y disponibilidad sin perder tiempo."
             },
@@ -130,14 +141,14 @@ export function Experiencia() {
                 "Los productos viven en archivos separados con el mismo contrato que luego puede mapearse a tablas reales."
             },
             {
-              title: "Diseño memorable",
+              title: "Diseno memorable",
               text:
-                "Integra colores corporativos, movimiento, tarjetas flotantes y una estética cercana sin verse como plantilla genérica."
+                "Integra colores corporativos, movimiento, tarjetas flotantes y una estetica cercana sin verse como plantilla generica."
             },
             {
-              title: "Preparada para campañas",
+              title: "Preparada para campanas",
               text:
-                "Ideal para verano, invierno, vendimia, turnos y promociones semanales sin prometer stock automático."
+                "Ideal para verano, invierno, vendimia, turnos y promociones semanales sin prometer inventario automatico."
             }
           ].map((step, index) => (
             <article className="step" key={step.title}>
@@ -159,9 +170,9 @@ export function Contacto() {
     <section className="cta" id="contacto">
       <div className="container cta-box reveal">
         <div>
-          <h2>Farmacia Andes, más cerca de tu salud.</h2>
+          <h2>Farmacia Andes, mas cerca de tu salud.</h2>
           <p>
-            Visítanos en San Fernando o escríbenos para consultar por medicamentos, protectores
+            Visitanos en San Fernando o escribenos para consultar por medicamentos, protectores
             solares, productos de cuidado personal y ofertas vigentes.
           </p>
           <div className="cta-actions">
@@ -181,11 +192,11 @@ export function Contacto() {
 
         <div className="quick-contact">
           <div className="contact-line">
-            <span>Dirección</span>
+            <span>Direccion</span>
             <b>{farmacia.direccion}</b>
           </div>
           <div className="contact-line">
-            <span>Teléfono</span>
+            <span>Telefono</span>
             <b>{farmacia.telefono}</b>
           </div>
           <div className="contact-line">
