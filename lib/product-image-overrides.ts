@@ -1,5 +1,6 @@
 import type { Product } from "@/types/product";
 import generatedMedicineImageOverrides from "@/data/medicine-image-overrides.json";
+import { getSafeImageUrl } from "@/lib/safe-image";
 
 const generatedImageOverrides = generatedMedicineImageOverrides as Record<string, string>;
 
@@ -102,5 +103,5 @@ export function getProductImageUrl(product: Pick<Product, "id" | "nombre" | "ima
   if (name.includes("citrato de magnesio")) return productImageUrls.magnesioCitrato;
   if (name.includes("magnesio")) return productImageUrls.magnesioVitaday;
 
-  return product.imagenUrl;
+  return getSafeImageUrl(product.imagenUrl);
 }

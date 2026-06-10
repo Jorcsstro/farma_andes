@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { formatCLP } from "@/lib/format";
 import { getProductImageUrl } from "@/lib/product-image-overrides";
 import { buildProductWhatsappUrl } from "@/lib/whatsapp";
@@ -149,6 +149,7 @@ function ShowcaseProductCard({ product }: { product: Product }) {
 function ProductShowcase({ config }: { config: ShowcaseConfig }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const [isAutoScrollPaused, setIsAutoScrollPaused] = useState(false);
+  const [isPageVisible, setIsPageVisible] = useState(true);
 
   const scrollByCard = useCallback((direction: -1 | 1) => {
     const track = trackRef.current;
@@ -168,7 +169,18 @@ function ProductShowcase({ config }: { config: ShowcaseConfig }) {
   }, []);
 
   useEffect(() => {
-    if (isAutoScrollPaused || config.products.length < 2) {
+    const handleVisibilityChange = () => {
+      setIsPageVisible(document.visibilityState === "visible");
+    };
+
+    handleVisibilityChange();
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  useEffect(() => {
+    if (isAutoScrollPaused || !isPageVisible || config.products.length < 2) {
       return;
     }
 
@@ -190,7 +202,7 @@ function ProductShowcase({ config }: { config: ShowcaseConfig }) {
     }, AUTO_SCROLL_DELAY_MS);
 
     return () => window.clearInterval(intervalId);
-  }, [config.products.length, isAutoScrollPaused, scrollByCard]);
+  }, [config.products.length, isAutoScrollPaused, isPageVisible, scrollByCard]);
 
   if (!config.products.length) {
     return null;
@@ -246,36 +258,39 @@ function ProductShowcase({ config }: { config: ShowcaseConfig }) {
 }
 
 export function ProductCarousels({ products }: ProductCarouselsProps) {
-  const medicines = sortShowcaseProducts(products.filter(isMedicationProduct));
-  const vitamins = sortShowcaseProducts(products.filter(isVitaminOrSupplement));
-  const nutrition = sortShowcaseProducts(products.filter(isNutritionProduct));
+  const medicines = useMemo(() => sortShowcaseProducts(products.filter(isMedicationProduct)), [products]);
+  const vitamins = useMemo(() => sortShowcaseProducts(products.filter(isVitaminOrSupplement)), [products]);
+  const nutrition = useMemo(() => sortShowcaseProducts(products.filter(isNutritionProduct)), [products]);
 
-  const sections: ShowcaseConfig[] = [
-    {
-      eyebrow: "Medicamentos",
-      title: "Medicamentos destacados",
-      description:
-        "Opciones de uso frecuente, con consulta directa por disponibilidad y orientacion del equipo de Farmacia Andes.",
-      products: medicines,
-      variant: "medicines"
-    },
-    {
-      eyebrow: "Cuidado familiar",
-      title: "Vitaminas y suplementos",
-      description:
-        "Seleccion de vitaminas, minerales, omega, magnesio y suplementos para acompanar el cuidado diario.",
-      products: vitamins,
-      variant: "vitamins"
-    },
-    {
-      eyebrow: "Nutricion",
-      title: "Apoyo nutricional",
-      description:
-        "Productos nutricionales, proteinas y formulas de apoyo para distintas etapas y necesidades.",
-      products: nutrition,
-      variant: "nutrition"
-    }
-  ];
+  const sections = useMemo<ShowcaseConfig[]>(
+    () => [
+      {
+        eyebrow: "Medicamentos",
+        title: "Medicamentos destacados",
+        description:
+          "Opciones de uso frecuente, con consulta directa por disponibilidad y orientacion del equipo de Farmacia Andes.",
+        products: medicines,
+        variant: "medicines"
+      },
+      {
+        eyebrow: "Cuidado familiar",
+        title: "Vitaminas y suplementos",
+        description:
+          "Seleccion de vitaminas, minerales, omega, magnesio y suplementos para acompanar el cuidado diario.",
+        products: vitamins,
+        variant: "vitamins"
+      },
+      {
+        eyebrow: "Nutricion",
+        title: "Apoyo nutricional",
+        description:
+          "Productos nutricionales, proteinas y formulas de apoyo para distintas etapas y necesidades.",
+        products: nutrition,
+        variant: "nutrition"
+      }
+    ],
+    [medicines, nutrition, vitamins]
+  );
 
   return (
     <>

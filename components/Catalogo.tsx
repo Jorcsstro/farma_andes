@@ -13,12 +13,79 @@ type CatalogoProps = {
 };
 
 const MAX_VISIBLE_RESULTS = 24;
+const DEFAULT_CATEGORY_IMAGE = "/identidad-visual/04%20Isotipo.png";
+
+const CATEGORY_IMAGE_FALLBACKS: Record<string, string> = {
+  Todos: "/products/medicamentos/tapsin-infantil-160mg-16comp.jpg",
+  Medicamentos: "/products/medicamentos/tapsin-infantil-160mg-16comp.jpg",
+  "Protección solar": "/products/solar-kids.svg",
+  Dermocosmética: "/products/medicamentos/prod-44688-garni-agua-mic-t-1-400-ml.jpg",
+  "Cuidado familiar": "/products/showcase/dha-kids-omega-3-90-capsulas.jpg",
+  Higiene: "/products/medicamentos/prod-44685-colgate-lum-w-carbon-90-g.jpg",
+  Veterinaria: "/products/suero.svg",
+  Accesorios: "/products/medicamentos/prod-12320-algodon-corriente-100-g.jpg",
+  Homeopatía: "/products/medicamentos/prod-16056-armonyl-noche-con-manzanilla-20-capsulas.jpg"
+};
+
+const CATEGORY_IMAGE_HINTS: Record<string, string[]> = {
+  Medicamentos: ["tapsin", "ibuprofeno", "paracetamol"],
+  "Protección solar": ["solar", "spf", "after sun"],
+  Dermocosmética: ["nivea", "crema", "piel", "serum"],
+  "Cuidado familiar": ["kids", "bebe", "dha", "pediasure"],
+  Higiene: ["oral", "bucal", "alcohol", "gel"],
+  Veterinaria: ["veter", "perro", "gato", "mascota"],
+  Accesorios: ["test", "algodon", "gasa"],
+  Homeopatía: ["homeop", "armonyl", "natural"]
+};
 
 function normalizeSearchText(value: string) {
   return value
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
+}
+
+function isRealProductImageUrl(imageUrl: string) {
+  return /\.(jpe?g|png|webp)(\?.*)?$/i.test(imageUrl) && !imageUrl.includes("/identidad-visual/");
+}
+
+function productMatchesHint(product: Product, hint: string) {
+  const normalizedHint = normalizeSearchText(hint);
+
+  return normalizeSearchText([product.nombre, product.marca, product.formato].join(" ")).includes(normalizedHint);
+}
+
+function getCategoryCoverProduct(category: string, products: Product[]) {
+  const categoryProducts = category === "Todos" ? products : products.filter((product) => product.categoria === category);
+  const hints = CATEGORY_IMAGE_HINTS[category] ?? [];
+
+  for (const hint of hints) {
+    const hintedProduct = categoryProducts.find((product) => {
+      const imageUrl = getProductImageUrl(product);
+
+      return productMatchesHint(product, hint) && isRealProductImageUrl(imageUrl);
+    });
+
+    if (hintedProduct) {
+      return hintedProduct;
+    }
+  }
+
+  for (const hint of hints) {
+    const hintedProduct = categoryProducts.find((product) => productMatchesHint(product, hint));
+
+    if (hintedProduct) {
+      return hintedProduct;
+    }
+  }
+
+  return (
+    categoryProducts.find((product) => product.destacado && isRealProductImageUrl(getProductImageUrl(product))) ??
+    categoryProducts.find((product) => isRealProductImageUrl(getProductImageUrl(product))) ??
+    categoryProducts.find((product) => product.destacado && product.imagenUrl) ??
+    categoryProducts.find((product) => product.imagenUrl) ??
+    categoryProducts[0]
+  );
 }
 
 function SearchProductCard({ product }: { product: Product }) {
@@ -81,6 +148,26 @@ export function Catalogo({ products }: CatalogoProps) {
 
     return [...baseCategories, ...extraCategories];
   }, [products]);
+
+  const categoryCards = useMemo(
+    () =>
+      categories.map((item) => {
+        const coverProduct = item === "Todos" ? undefined : getCategoryCoverProduct(item, products);
+        const productImageUrl = coverProduct ? getProductImageUrl(coverProduct) : "";
+        const imageUrl = isRealProductImageUrl(productImageUrl)
+          ? productImageUrl
+          : CATEGORY_IMAGE_FALLBACKS[item] || productImageUrl || DEFAULT_CATEGORY_IMAGE;
+        const productCount = item === "Todos" ? products.length : products.filter((product) => product.categoria === item).length;
+
+        return {
+          name: item,
+          imageUrl,
+          isExternalImage: imageUrl.startsWith("http"),
+          productCount
+        };
+      }),
+    [categories, products]
+  );
 
   const searchableProducts = useMemo(
     () =>
@@ -169,15 +256,26 @@ export function Catalogo({ products }: CatalogoProps) {
             </label>
 
             <div className="category-tabs" role="tablist" aria-label="Filtrar por categoria">
-              {categories.map((item) => (
+              {categoryCards.map((item) => (
                 <button
-                  key={item}
+                  key={item.name}
                   type="button"
-                  className={item === category ? "active" : ""}
-                  onClick={() => setCategory(item)}
-                  aria-pressed={item === category}
+                  className={`category-card ${item.name === category ? "active" : ""}`}
+                  onClick={() => setCategory(item.name)}
+                  aria-label={`Filtrar ${item.productCount} productos de ${item.name}`}
+                  aria-pressed={item.name === category}
                 >
-                  {item}
+                  <span className="category-card-media" aria-hidden="true">
+                    <Image
+                      src={item.imageUrl}
+                      alt=""
+                      width={86}
+                      height={70}
+                      sizes="86px"
+                      unoptimized={item.isExternalImage}
+                    />
+                  </span>
+                  <span className="category-card-title">{item.name}</span>
                 </button>
               ))}
             </div>
