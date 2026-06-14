@@ -1,7 +1,7 @@
 export const farmacia = {
   nombre: "Farmacia Andes",
   dominio: "www.farmaciaandes.cl",
-  subtitulo: "Salud cercana en San Fernando",
+  subtitulo: "Tu farmacia de confianza en San Fernando",
 
   direccion: "Cardenal Caro 510, San Fernando",
   ciudad: "San Fernando",
@@ -9,7 +9,8 @@ export const farmacia = {
 
   telefono: "+56 9 6110 1655",
   whatsapp: "56961101655",
-  whatsappUrl: "https://wa.me/56961101655",
+  whatsappUrl:
+    "https://wa.me/56961101655?text=Hola,%20quiero%20consultar%20por%20un%20producto%20en%20Farmacia%20Andes",
 
   email: "contacto@farmaciaandes.cl",
 
@@ -19,8 +20,8 @@ export const farmacia = {
   facebook: "Farmacia Andes",
   facebookUrl: "#",
 
-  horarioPrincipal: "Lun a vie 9:00 - 20:00",
-  horarioSemana: "9:00 - 20:00 hrs",
+  horarioPrincipal: "Lun a vie 09:00 - 20:00 hrs",
+  horarioSemana: "09:00 - 20:00 hrs",
   horarioSabado: "10:00 - 15:00 hrs",
   horarioDomingo: "Consultar turno",
 
@@ -31,7 +32,7 @@ export const farmacia = {
     "https://www.google.com/maps/search/?api=1&query=Cardenal+Caro+510+San+Fernando+Chile",
 
   mapaEmbed:
-    "https://www.google.com/maps?q=Cardenal+Caro+510,+San+Fernando,+Chile&output=embed"
+    "https://www.google.com/maps?q=Cardenal%20Caro%20510%2C%20San%20Fernando%2C%20Chile&output=embed"
 };
 
 export const servicios = [
@@ -39,25 +40,25 @@ export const servicios = [
     icono: "Rx",
     titulo: "Medicamentos y consulta",
     texto:
-      "Consulta disponibilidad de medicamentos, alternativas y orientación de compra directamente con Farmacia Andes."
+      "Consulta disponibilidad de medicamentos, precios referenciales y alternativas directamente con Farmacia Andes."
   },
   {
     icono: "SPF",
     titulo: "Protección solar",
     texto:
-      "Productos para el cuidado de la piel y protección solar, ideales para la temporada de verano y uso diario."
+      "Productos para el cuidado de la piel y protección solar, ideales para el uso diario y la temporada de verano."
   },
   {
     icono: "Dermo",
     titulo: "Dermocosmética",
     texto:
-      "Espacio para productos de cuidado facial, corporal, rutinas de piel y recomendaciones según cada necesidad."
+      "Cuidado facial y corporal con productos pensados para distintas necesidades de la piel."
   },
   {
     icono: "Fam",
     titulo: "Cuidado familiar",
     texto:
-      "Categorías pensadas para niños, adultos, adultos mayores, higiene, salud preventiva y bienestar diario."
+      "Productos para niños, adultos y adultos mayores, enfocados en higiene, salud preventiva y bienestar diario."
   }
 ];
 
@@ -76,11 +77,11 @@ export const categoriasBase = [
 export const horarios = [
   {
     dia: "Lunes a viernes",
-    hora: "9:00 - 20:00"
+    hora: "09:00 - 20:00 hrs"
   },
   {
     dia: "Sábados",
-    hora: "10:00 - 15:00"
+    hora: "10:00 - 15:00 hrs"
   },
   {
     dia: "Domingos y feriados",

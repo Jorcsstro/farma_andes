@@ -1,0 +1,127 @@
+[
+  {
+    "name": "Eucerin",
+    "slug": "eucerin",
+    "domain": "eucerin.com",
+    "preferFallback": true,
+    "src": "/brands/eucerin.png",
+    "source": "fallback-svg"
+  },
+  {
+    "name": "NIVEA",
+    "slug": "nivea",
+    "domain": "nivea.com",
+    "src": "/brands/nivea.png",
+    "source": "https://www.google.com/s2/favicons?domain=nivea.com&sz=256"
+  },
+  {
+    "name": "La Roche-Posay",
+    "slug": "la-roche-posay",
+    "domain": "laroche-posay.com",
+    "preferFallback": true,
+    "src": "/brands/la-roche-posay.png",
+    "source": "fallback-svg"
+  },
+  {
+    "name": "Vichy",
+    "slug": "vichy",
+    "domain": "vichy.com",
+    "src": "/brands/vichy.png",
+    "source": "https://www.google.com/s2/favicons?domain=vichy.com&sz=256"
+  },
+  {
+    "name": "CeraVe",
+    "slug": "cerave",
+    "domain": "cerave.com",
+    "preferFallback": true,
+    "src": "/brands/cerave.png",
+    "source": "fallback-svg"
+  },
+  {
+    "name": "ISDIN",
+    "slug": "isdin",
+    "domain": "isdin.com",
+    "preferFallback": true,
+    "src": "/brands/isdin.png",
+    "source": "fallback-svg"
+  },
+  {
+    "name": "Banana Boat",
+    "slug": "banana-boat",
+    "domain": "bananaboat.com",
+    "preferFallback": true,
+    "src": "/brands/banana-boat.png",
+    "source": "fallback-svg"
+  },
+  {
+    "name": "Dove",
+    "slug": "dove",
+    "domain": "dove.com",
+    "src": "/brands/dove.png",
+    "source": "https://www.google.com/s2/favicons?domain=dove.com&sz=256"
+  },
+  {
+    "name": "Rexona",
+    "slug": "rexona",
+    "domain": "rexona.com",
+    "preferFallback": true,
+    "src": "/brands/rexona.png",
+    "source": "fallback-svg"
+  },
+  {
+    "name": "Colgate",
+    "slug": "colgate",
+    "domain": "colgate.com",
+    "preferFallback": true,
+    "src": "/brands/colgate.png",
+    "source": "fallback-svg"
+  },
+  {
+    "name": "Vitis",
+    "slug": "vitis",
+    "domain": "vitis.es",
+    "preferFallback": true,
+    "src": "/brands/vitis.png",
+    "source": "fallback-svg"
+  },
+  {
+    "name": "Petrizzio",
+    "slug": "petrizzio",
+    "domain": "petrizzio.cl",
+    "preferFallback": true,
+    "src": "/brands/petrizzio.png",
+    "source": "fallback-svg"
+  },
+  {
+    "name": "Pantene",
+    "slug": "pantene",
+    "domain": "pantene.com",
+    "preferFallback": true,
+    "src": "/brands/pantene.png",
+    "source": "fallback-svg"
+  },
+  {
+    "name": "Cicatricure",
+    "slug": "cicatricure",
+    "domain": "cicatricure.com",
+    "preferFallback": true,
+    "src": "/brands/cicatricure.png",
+    "source": "fallback-svg"
+  },
+  {
+    "name": "Bepanthol",
+    "slug": "bepanthol",
+    "domain": "bepanthol.com",
+    "preferFallback": true,
+    "src": "/brands/bepanthol.png",
+    "source": "fallback-svg"
+  },
+  {
+    "name": "Aquafresh",
+    "slug": "aquafresh",
+    "domain": "aquafresh.com",
+    "preferFallback": true,
+    "src": "/brands/aquafresh.png",
+    "source": "fallback-svg"
+  }
+]

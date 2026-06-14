@@ -16,7 +16,8 @@ type ShowcaseConfig = {
   title: string;
   description: string;
   products: Product[];
-  variant: "medicines" | "vitamins" | "nutrition";
+  winterProducts?: Product[];
+  variant: "medicines" | "vitamins" | "nutrition" | "veterinary";
 };
 
 const MAX_CAROUSEL_ITEMS = 18;
@@ -109,6 +110,66 @@ function isMedicationProduct(product: Product) {
   return product.categoria === "Medicamentos";
 }
 
+function isVeterinaryProduct(product: Product) {
+  return product.categoria === "Veterinaria";
+}
+
+function isWinterProduct(product: Product) {
+  const text = searchableText(product);
+  const terms = [
+    "abrilar",
+    "acido ascorbico",
+    "antigripal",
+    "bron",
+    "cebion",
+    "cetirizina",
+    "clorfenamina",
+    "descongestion",
+    "finagrip",
+    "garganta",
+    "geniol",
+    "hiedrix",
+    "ibuprofeno",
+    "jarabe",
+    "kitadol",
+    "loratadina",
+    "miel",
+    "mucolitico",
+    "nastizol",
+    "paracetamol",
+    "propoleo",
+    "resfrio",
+    "salbutamol",
+    "tapsin",
+    "tocalm",
+    "tos",
+    "vitamina c",
+    "xumadol"
+  ];
+
+  return hasAnyTerm(text, terms);
+}
+
+function sortWinterProducts(products: Product[]) {
+  return [...products]
+    .filter((product) => product.precio > 0 && isWinterProduct(product))
+    .sort((a, b) => {
+      if (a.destacado !== b.destacado) {
+        return a.destacado ? -1 : 1;
+      }
+
+      const aImage = getProductImageUrl(a).includes(".svg") ? 1 : 0;
+      const bImage = getProductImageUrl(b).includes(".svg") ? 1 : 0;
+
+      if (aImage !== bImage) {
+        return aImage - bImage;
+      }
+
+      return a.nombre.localeCompare(b.nombre, "es");
+    })
+    .slice(0, 16);
+}
+
 function ShowcaseProductCard({ product }: { product: Product }) {
   const whatsappUrl = buildProductWhatsappUrl(product);
   const imageUrl = getProductImageUrl(product);
@@ -143,6 +204,84 @@ function ShowcaseProductCard({ product }: { product: Product }) {
         </a>
       </div>
     </article>
+  );
+}
+
+function WinterProductCard({ product }: { product: Product }) {
+  const whatsappUrl = buildProductWhatsappUrl(product);
+  const imageUrl = getProductImageUrl(product);
+  const isExternalImage = imageUrl.startsWith("http");
+
+  return (
+    <article className="winter-product-card">
+      <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" aria-label={`Consultar por ${product.nombre}`}>
+        <span className="winter-product-media">
+          <Image
+            src={imageUrl}
+            alt=""
+            width={180}
+            height={132}
+            aria-hidden="true"
+            unoptimized={isExternalImage}
+          />
+        </span>
+        <span className="winter-product-info">
+          <small>{product.marca}</small>
+          <strong>{product.nombre}</strong>
+          <span>{formatCLP(product.precio)}</span>
+        </span>
+      </a>
+    </article>
+  );
+}
+
+function WinterCareCarousel({ products }: { products: Product[] }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  const scrollByCard = useCallback((direction: -1 | 1) => {
+    const track = trackRef.current;
+
+    if (!track) {
+      return;
+    }
+
+    const firstCard = track.querySelector<HTMLElement>(".winter-product-card");
+    const cardWidth = firstCard?.getBoundingClientRect().width ?? 188;
+    const columnGap = Number.parseFloat(window.getComputedStyle(track).columnGap || "12");
+
+    track.scrollBy({
+      behavior: "smooth",
+      left: direction * (cardWidth + columnGap) * 2
+    });
+  }, []);
+
+  if (!products.length) {
+    return null;
+  }
+
+  return (
+    <div className="winter-care-carousel reveal" aria-label="Productos de invierno destacados">
+      <div className="winter-care-head">
+        <div>
+          <span>Temporada invierno</span>
+          <h3>Para tener a mano</h3>
+        </div>
+        <div className="winter-care-actions">
+          <button type="button" aria-label="Ver productos anteriores de invierno" onClick={() => scrollByCard(-1)}>
+            &lsaquo;
+          </button>
+          <button type="button" aria-label="Ver mas productos de invierno" onClick={() => scrollByCard(1)}>
+            &rsaquo;
+          </button>
+        </div>
+      </div>
+
+      <div className="winter-product-track" ref={trackRef}>
+        {products.map((product) => (
+          <WinterProductCard key={product.id} product={product} />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -253,6 +392,46 @@ function ProductShowcase({ config }: { config: ShowcaseConfig }) {
           &rsaquo;
         </button>
       </div>
+
+      {config.variant === "medicines" && (
+        <div className="container winter-campaign-container">
+          <a
+            className="winter-campaign-banner reveal"
+            href="#catalogo"
+            aria-label="Ver productos para resfrio, tos y defensas en Farmacia Andes"
+          >
+            <Image
+              src="/sections/banner-invierno-andes-real-products.png"
+              alt="Disfruta el invierno con cuidado Andes. Productos para resfrio, tos y defensas."
+              width={1847}
+              height={852}
+              sizes="(max-width: 768px) calc(100vw - 32px), min(1180px, calc(100vw - 48px))"
+              priority={false}
+            />
+          </a>
+
+          <WinterCareCarousel products={config.winterProducts ?? []} />
+        </div>
+      )}
+
+      {config.variant === "veterinary" && (
+        <div className="container winter-campaign-container vet-campaign-container">
+          <a
+            className="winter-campaign-banner vet-campaign-banner reveal"
+            href="#catalogo"
+            aria-label="Ver productos veterinarios en Farmacia Andes"
+          >
+            <Image
+              src="/sections/banner-veterinaria-andes.png"
+              alt="Cuidado veterinario cerca de tu familia. Consulta antiparasitarios, suplementos y cuidado diario."
+              width={1847}
+              height={852}
+              sizes="(max-width: 768px) calc(100vw - 32px), min(1180px, calc(100vw - 48px))"
+              priority={false}
+            />
+          </a>
+        </div>
+      )}
     </section>
   );
 }
@@ -261,6 +440,8 @@ export function ProductCarousels({ products }: ProductCarouselsProps) {
   const medicines = useMemo(() => sortShowcaseProducts(products.filter(isMedicationProduct)), [products]);
   const vitamins = useMemo(() => sortShowcaseProducts(products.filter(isVitaminOrSupplement)), [products]);
   const nutrition = useMemo(() => sortShowcaseProducts(products.filter(isNutritionProduct)), [products]);
+  const veterinary = useMemo(() => sortShowcaseProducts(products.filter(isVeterinaryProduct)), [products]);
+  const winterProducts = useMemo(() => sortWinterProducts(products), [products]);
 
   const sections = useMemo<ShowcaseConfig[]>(
     () => [
@@ -270,6 +451,7 @@ export function ProductCarousels({ products }: ProductCarouselsProps) {
         description:
           "Opciones de uso frecuente, con consulta directa por disponibilidad y orientacion del equipo de Farmacia Andes.",
         products: medicines,
+        winterProducts,
         variant: "medicines"
       },
       {
@@ -287,9 +469,17 @@ export function ProductCarousels({ products }: ProductCarouselsProps) {
           "Productos nutricionales, proteinas y formulas de apoyo para distintas etapas y necesidades.",
         products: nutrition,
         variant: "nutrition"
+      },
+      {
+        eyebrow: "Veterinaria",
+        title: "Cuidado veterinario",
+        description:
+          "Antiparasitarios, suplementos y productos de cuidado para consultar disponibilidad en farmacia.",
+        products: veterinary,
+        variant: "veterinary"
       }
     ],
-    [medicines, nutrition, vitamins]
+    [medicines, nutrition, veterinary, vitamins, winterProducts]
   );
 
   return (

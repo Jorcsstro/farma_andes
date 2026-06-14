@@ -1,0 +1,8 @@
+<svg width="320" height="220" viewBox="0 0 320 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="58" y="60" width="204" height="106" rx="18" fill="#ffffff" stroke="#d9e7ff" stroke-width="6"/>
+  <path d="M58 101H262" stroke="#153f98" stroke-width="24"/>
+  <path d="M88 136H188" stroke="#ff7a00" stroke-width="12" stroke-linecap="round"/>
+  <path d="M88 154H146" stroke="#c8d8f4" stroke-width="9" stroke-linecap="round"/>
+  <path d="M221 126C235 126 246 137 246 151C246 158 240 164 233 164H209C202 164 196 158 196 151C196 137 207 126 221 126Z" fill="#eef5ff" stroke="#153f98" stroke-width="5"/>
+  <text x="84" y="91" fill="#153f98" font-family="Arial, sans-serif" font-size="19" font-weight="900">LORATADINA</text>
+</svg>

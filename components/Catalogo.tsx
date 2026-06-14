@@ -12,8 +12,25 @@ type CatalogoProps = {
   products: Product[];
 };
 
-const MAX_VISIBLE_RESULTS = 24;
 const DEFAULT_CATEGORY_IMAGE = "/identidad-visual/04%20Isotipo.png";
+const BRAND_LOGOS = [
+  { name: "Eucerin", src: "/brands/eucerin.png" },
+  { name: "NIVEA", src: "/brands/nivea.png" },
+  { name: "La Roche-Posay", src: "/brands/la-roche-posay.png" },
+  { name: "Vichy", src: "/brands/vichy.png" },
+  { name: "CeraVe", src: "/brands/cerave.png" },
+  { name: "ISDIN", src: "/brands/isdin.png" },
+  { name: "Banana Boat", src: "/brands/banana-boat.png" },
+  { name: "Dove", src: "/brands/dove.png" },
+  { name: "Rexona", src: "/brands/rexona.png" },
+  { name: "Colgate", src: "/brands/colgate.png" },
+  { name: "Vitis", src: "/brands/vitis.png" },
+  { name: "Petrizzio", src: "/brands/petrizzio.png" },
+  { name: "Pantene", src: "/brands/pantene.png" },
+  { name: "Cicatricure", src: "/brands/cicatricure.png" },
+  { name: "Bepanthol", src: "/brands/bepanthol.png" },
+  { name: "Aquafresh", src: "/brands/aquafresh.png" }
+];
 
 const CATEGORY_IMAGE_FALLBACKS: Record<string, string> = {
   Todos: "/products/medicamentos/tapsin-infantil-160mg-16comp.jpg",
@@ -134,10 +151,12 @@ function SearchProductCard({ product }: { product: Product }) {
 
 export function Catalogo({ products }: CatalogoProps) {
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("Todos");
-  const deferredQuery = useDeferredValue(query);
-  const normalizedQuery = normalizeSearchText(deferredQuery.trim());
-  const hasSearch = normalizedQuery.length > 0;
+const [category, setCategory] = useState("Todos");
+const [isSearchOpen, setIsSearchOpen] = useState(false);
+
+const deferredQuery = useDeferredValue(query);
+const normalizedQuery = normalizeSearchText(deferredQuery.trim());
+const hasSearch = normalizedQuery.length >= 2;
 
   const categories = useMemo(() => {
     const productCategories = Array.from(new Set(products.map((product) => product.categoria)));
@@ -202,7 +221,8 @@ export function Catalogo({ products }: CatalogoProps) {
       : searchMatches.filter((product) => product.categoria === category);
   }, [category, searchMatches]);
 
-  const panelProducts = matchingProducts.slice(0, MAX_VISIBLE_RESULTS);
+  const panelProducts = matchingProducts.slice(0, 6);
+  const showSearchPanel = isSearchOpen && hasSearch;
 
   return (
     <section className={`catalog-section ${hasSearch ? "has-search" : ""}`} id="catalogo">
@@ -226,34 +246,6 @@ export function Catalogo({ products }: CatalogoProps) {
 
         <div className="catalog-search-area reveal">
           <div className="catalog-tools">
-            <label className="search-box" htmlFor="product-search">
-              <span className="sr-only">Buscar productos</span>
-              <span aria-hidden="true">Buscar</span>
-              <input
-                id="product-search"
-                type="text"
-                role="searchbox"
-                placeholder="Buscar por producto, marca o formato"
-                value={query}
-                onChange={(event) => {
-                  setQuery(event.target.value);
-                  setCategory("Todos");
-                }}
-              />
-              {query && (
-                <button
-                  className="search-clear"
-                  type="button"
-                  aria-label="Limpiar busqueda"
-                  onClick={() => {
-                    setQuery("");
-                    setCategory("Todos");
-                  }}
-                >
-                  x
-                </button>
-              )}
-            </label>
 
             <div className="category-tabs" role="tablist" aria-label="Filtrar por categoria">
               {categoryCards.map((item) => (
@@ -279,9 +271,53 @@ export function Catalogo({ products }: CatalogoProps) {
                 </button>
               ))}
             </div>
+            
+            <div className="search-box search-box-fibo">
+  <label className="sr-only" htmlFor="product-search">
+    Buscar productos
+  </label>
+
+  <span aria-hidden="true">Buscar</span>
+
+  <input
+    id="product-search"
+    type="text"
+    role="searchbox"
+    placeholder="Buscar por producto, marca o formato"
+    value={query}
+    autoComplete="off"
+    onFocus={() => setIsSearchOpen(true)}
+    onKeyDown={(event) => {
+      if (event.key === "Escape") {
+        setIsSearchOpen(false);
+      }
+    }}
+    onChange={(event) => {
+      setQuery(event.target.value);
+      setCategory("Todos");
+      setIsSearchOpen(true);
+    }}
+  />
+
+  {query && (
+    <button
+      className="search-clear"
+      type="button"
+      aria-label="Limpiar búsqueda"
+      onClick={() => {
+        setQuery("");
+        setCategory("Todos");
+        setIsSearchOpen(false);
+      }}
+    >
+      ×
+    </button>
+  )}
+</div>
+
           </div>
 
-          {hasSearch && (
+          {showSearchPanel && (
             <div className="search-results-panel" role="region" aria-label="Resultados de busqueda">
               {searchMatches.length > 0 ? (
                 <div className="search-panel-grid">
@@ -289,8 +325,8 @@ export function Catalogo({ products }: CatalogoProps) {
                     <div className="search-results-head">
                       <span>
                         {matchingProducts.length > panelProducts.length
-                          ? `Mostrando ${panelProducts.length} de ${matchingProducts.length} resultados`
-                          : `${panelProducts.length} resultados`}
+  ? `Mostrando ${panelProducts.length} de ${matchingProducts.length} resultados`
+  : `${matchingProducts.length} resultado${matchingProducts.length === 1 ? "" : "s"}`}
                       </span>
                       <strong>{category === "Todos" ? "Todos" : category}</strong>
                     </div>
@@ -325,17 +361,17 @@ export function Catalogo({ products }: CatalogoProps) {
         </div>
       </div>
 
-      <div className="marquee-wrap" aria-hidden="true">
-        <div className="marquee">
-          <span>
-            PROTECCION SOLAR <b>+</b> MEDICAMENTOS <b>+</b> DERMOCOSMETICA <b>+</b> CUIDADO
-            FAMILIAR <b>+</b> SAN FERNANDO <b>+</b>
-          </span>
-
-          <span>
-            PROTECCION SOLAR <b>+</b> MEDICAMENTOS <b>+</b> DERMOCOSMETICA <b>+</b> CUIDADO
-            FAMILIAR <b>+</b> SAN FERNANDO <b>+</b>
-          </span>
+      <div className="brand-marquee-wrap" aria-label="Marcas disponibles en Farmacia Andes">
+        <div className="brand-marquee">
+          {[0, 1].map((group) => (
+            <div className="brand-marquee-group" key={group} aria-hidden={group === 1}>
+              {BRAND_LOGOS.map((brand) => (
+                <span className="brand-logo-pill" key={`${group}-${brand.name}`}>
+                  <Image src={brand.src} alt={brand.name} width={130} height={48} sizes="130px" />
+                </span>
+              ))}
+            </div>
+          ))}
         </div>
       </div>
     </section>

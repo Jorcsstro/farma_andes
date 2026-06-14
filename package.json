@@ -6,7 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "download:brand-logos": "node scripts/download_brand_logos.mjs",
+    "download:product-images": "node scripts/download_missing_product_images.mjs",
+    "export:woocommerce": "node scripts/export_woocommerce_csv.mjs",
+    "generate:gym-banner": "node scripts/generate_gym_banner.mjs",
+    "generate:vet-banner": "node scripts/generate_vet_banner.mjs",
+    "generate:winter-banner": "node scripts/generate_winter_banner.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.4",
