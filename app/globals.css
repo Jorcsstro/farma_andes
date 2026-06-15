@@ -5698,82 +5698,98 @@ h1 {
 
 /* =========================================================
    DROPDOWN PRODUCTOS - HEADER FARMACIA ANDES
-   Debe quedar FUERA de cualquier @media.
    ========================================================= */
 
 .andes-header,
 .andes-nav {
-  overflow: visible !important;
+  overflow: visible;
 }
 
 .andes-nav-dropdown {
-  position: relative !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  height: 100% !important;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Puente invisible para que el menú no se cierre al bajar el mouse */
+.andes-nav-dropdown::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: -18px;
+  right: -18px;
+  height: 18px;
 }
 
 .andes-nav-dropdown-trigger {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  color: inherit !important;
-  text-decoration: none !important;
-  white-space: nowrap !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: inherit;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .andes-nav-dropdown-trigger span {
-  font-size: 12px !important;
-  line-height: 1 !important;
+  font-size: 12px;
+  line-height: 1;
 }
 
 .andes-nav-dropdown-menu {
-  position: absolute !important;
-  top: calc(100% + 14px) !important;
-  left: 50% !important;
-  transform: translateX(-50%) translateY(8px) !important;
-  min-width: 230px !important;
-  padding: 10px !important;
-  border-radius: 16px !important;
-  background: #ffffff !important;
-  box-shadow: 0 18px 45px rgba(6, 27, 70, 0.18) !important;
-  display: none !important;
-  flex-direction: column !important;
-  gap: 2px !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
-  pointer-events: none !important;
-  z-index: 9999 !important;
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  z-index: 9999;
+
+  min-width: 230px;
+  padding: 10px;
+
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 18px 45px rgba(6, 27, 70, 0.18);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transform: translateX(-50%) translateY(8px);
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    visibility 0.18s ease;
 }
 
 .andes-nav-dropdown:hover .andes-nav-dropdown-menu,
 .andes-nav-dropdown:focus-within .andes-nav-dropdown-menu {
-  display: flex !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  pointer-events: auto !important;
-  transform: translateX(-50%) translateY(0) !important;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
 }
 
 .andes-nav-dropdown-menu a {
-  display: block !important;
-  width: 100% !important;
-  padding: 11px 13px !important;
-  border-radius: 10px !important;
-  color: #061b46 !important;
-  background: transparent !important;
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  line-height: 1.2 !important;
-  text-decoration: none !important;
-  white-space: nowrap !important;
+  display: block;
+  width: 100%;
+  padding: 11px 13px;
+
+  color: #061b46;
+  background: transparent;
+  border-radius: 10px;
+
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .andes-nav-dropdown-menu a::after {
-  display: none !important;
+  display: none;
+  content: none;
 }
 
 .andes-nav-dropdown-menu a:hover {
-  background: #f5f8fc !important;
-  color: #f58200 !important;
+  color: #f58200;
+  background: #f5f8fc;
 }
+
