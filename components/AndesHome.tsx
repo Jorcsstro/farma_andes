@@ -408,6 +408,7 @@ export function AndesHome({ products }: AndesHomeProps) {
 
   // Estado del catálogo — independiente del buscador
   const [activeFilter, setActiveFilter] = useState("todos");
+  const [catalogQuery, setCatalogQuery] = useState("");
 
   // Montar en cliente (necesario para portal)
   useEffect(() => {
@@ -466,12 +467,16 @@ export function AndesHome({ products }: AndesHomeProps) {
   const filteredProducts = useMemo(() => {
     const filter =
       quickFilters.find((item) => item.id === activeFilter) ?? quickFilters[0];
+    const normalizedQuery = normalizeText(catalogQuery.trim());
 
     return [...products]
       .filter((product) => matchesTerms(product, filter.terms))
+      .filter((product) =>
+        normalizedQuery ? productText(product).includes(normalizedQuery) : true
+      )
       .sort((a, b) => getProductPriority(a) - getProductPriority(b))
       .slice(0, 12);
-  }, [activeFilter, products]);
+  }, [activeFilter, catalogQuery, products]);
 
   // Buscador hero: resultados en tiempo real para el dropdown
   const searchResults = useMemo(() => {
@@ -485,12 +490,8 @@ export function AndesHome({ products }: AndesHomeProps) {
       .slice(0, 6);
   }, [products, searchQuery]);
 
-  const catalogProducts =
-    activeFilter === "todos"
-      ? featuredProducts
-      : filteredProducts.length
-        ? filteredProducts
-        : featuredProducts;
+  const isCatalogFiltering = activeFilter !== "todos" || catalogQuery.trim().length > 0;
+  const catalogProducts = isCatalogFiltering ? filteredProducts : featuredProducts;
 
   const winterSeasonProducts = useMemo(
     () =>
@@ -733,6 +734,21 @@ export function AndesHome({ products }: AndesHomeProps) {
             </p>
           </div>
 
+          <div className="andes-catalog-search" role="search">
+            <label className="sr-only" htmlFor="andes-catalog-search">
+              Buscar en el catalogo
+            </label>
+            <span aria-hidden="true" />
+            <input
+              id="andes-catalog-search"
+              type="search"
+              placeholder="Buscar producto, marca o categoria..."
+              value={catalogQuery}
+              autoComplete="off"
+              onChange={(event) => setCatalogQuery(event.target.value)}
+            />
+          </div>
+
           <div className="andes-filter-row" aria-label="Filtros del catálogo">
             {quickFilters.map((filter) => (
               <button
@@ -752,7 +768,7 @@ export function AndesHome({ products }: AndesHomeProps) {
             ))}
           </div>
 
-          {!filteredProducts.length && (
+          {isCatalogFiltering && !filteredProducts.length && (
             <div className="andes-empty">
               No encontramos coincidencias exactas. Puedes encargarnos el producto
               por WhatsApp.

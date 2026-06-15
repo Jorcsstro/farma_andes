@@ -4010,7 +4010,7 @@ h1 {
   position: relative;
   z-index: 5;
   display: grid;
-  width: min(100% - 32px, 1040px);
+  width: min(100% - 32px, 1160px);
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 0;
   margin: -44px auto 0;
@@ -4162,7 +4162,7 @@ h1 {
 .andes-wellness,
 .andes-offers,
 .andes-contact {
-  width: min(100% - 32px, 1040px);
+  width: min(100% - 32px, 1160px);
   margin-right: auto;
   margin-left: auto;
 }
@@ -4490,7 +4490,7 @@ h1 {
 
 .andes-location-vademecum {
   display: grid;
-  width: min(100% - 32px, 1180px);
+  width: min(100% - 32px, 1160px);
   gap: 22px;
   padding-top: var(--andes-section-gap);
   scroll-margin-top: 96px;
@@ -5085,7 +5085,7 @@ h1 {
   display: grid;
   max-width: 640px;
   gap: 8px;
-  margin-bottom: 36px;
+  margin-bottom: 24px;
 }
 
 .andes-section-head > span,
@@ -5100,6 +5100,67 @@ h1 {
   text-transform: uppercase;
   background: #fff0df;
   border-radius: 999px;
+}
+
+.andes-catalog-search {
+  position: relative;
+  display: grid;
+  width: min(100%, 560px);
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+  min-height: 48px;
+  margin-bottom: 18px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 59, 145, 0.12);
+  border-radius: 999px;
+  box-shadow: 0 10px 24px rgba(0, 38, 92, 0.06);
+}
+
+.andes-catalog-search span {
+  position: relative;
+  height: 100%;
+}
+
+.andes-catalog-search span::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  left: 18px;
+  width: 11px;
+  height: 11px;
+  border: 2px solid #66758f;
+  border-radius: 999px;
+}
+
+.andes-catalog-search span::after {
+  content: "";
+  position: absolute;
+  top: 28px;
+  left: 29px;
+  width: 7px;
+  height: 2px;
+  background: #66758f;
+  border-radius: 999px;
+  transform: rotate(45deg);
+}
+
+.andes-catalog-search input {
+  min-width: 0;
+  height: 100%;
+  padding-right: 18px;
+  color: var(--andes-text);
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
+.andes-catalog-search:focus-within {
+  border-color: rgba(0, 59, 145, 0.24);
+  box-shadow: 0 12px 28px rgba(0, 38, 92, 0.09);
+}
+
+.andes-catalog-search input::placeholder {
+  color: #7a8496;
 }
 
 .andes-filter-row {
@@ -5571,12 +5632,18 @@ h1 {
 
   .andes-search {
     grid-template-columns: 40px minmax(0, 1fr);
+    min-height: 50px;
     border-radius: 22px;
   }
 
   .andes-search button {
-    grid-column: 1 / -1;
+    display: none;
+  }
+
+  .andes-catalog-search {
+    width: 100%;
     min-height: 46px;
+    margin-bottom: 16px;
   }
 
   .andes-trust-row {
