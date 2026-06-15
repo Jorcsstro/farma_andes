@@ -73,6 +73,187 @@
   box-shadow: 0 10px 28px rgba(0, 38, 92, 0.06);
 }
 
+.catalogLayout {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+  padding-bottom: 84px;
+}
+
+.sidebar {
+  display: grid;
+  gap: 18px;
+  position: sticky;
+  top: 92px;
+}
+
+.sidebarGroup {
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(0, 59, 145, 0.09);
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(0, 38, 92, 0.05);
+}
+
+.sidebarGroup h2 {
+  margin: 0 0 12px;
+  color: #0e1b33;
+  font-size: 14px;
+  font-weight: 950;
+}
+
+.sidebarList,
+.checkboxList {
+  display: grid;
+  gap: 6px;
+}
+
+.sidebarButton {
+  min-height: 36px;
+  padding: 9px 10px;
+  color: #405069;
+  font-size: 13px;
+  font-weight: 850;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+}
+
+.sidebarButton:hover,
+.sidebarButtonActive {
+  color: #003b91;
+  background: #eef5ff;
+}
+
+.checkboxItem {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  color: #405069;
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.checkboxItem input {
+  width: 14px;
+  height: 14px;
+  margin-top: 2px;
+  accent-color: #003b91;
+}
+
+.productArea {
+  min-width: 0;
+}
+
+.catalogTools {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 210px;
+  gap: 18px;
+  align-items: start;
+  margin-bottom: 24px;
+}
+
+.fiboSearch {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 54px;
+  min-height: 50px;
+  overflow: visible;
+  background: #ffffff;
+  border: 1px solid rgba(0, 59, 145, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 10px 26px rgba(0, 38, 92, 0.06);
+}
+
+.fiboSearch input {
+  min-width: 0;
+  padding: 0 17px;
+  color: #0e1b33;
+  background: transparent;
+  border: 0;
+  outline: 0;
+}
+
+.fiboSearch input::placeholder {
+  color: #8a96aa;
+}
+
+.fiboSearch > button {
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  font-size: 0;
+  font-weight: 950;
+  background: #003b91;
+  border: 0;
+  border-radius: 0 8px 8px 0;
+}
+
+.fiboSearch > button::before {
+  content: "";
+  width: 13px;
+  height: 13px;
+  border: 2px solid currentColor;
+  border-radius: 999px;
+  box-shadow: 7px 7px 0 -5px currentColor;
+  transform: rotate(-10deg);
+}
+
+.fiboPanel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: 0;
+  z-index: 20;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid rgba(0, 59, 145, 0.12);
+  border-radius: 12px;
+  box-shadow: 0 20px 42px rgba(0, 38, 92, 0.16);
+}
+
+.fiboPanel button {
+  display: grid;
+  width: 100%;
+  gap: 3px;
+  padding: 12px 14px;
+  text-align: left;
+  background: #ffffff;
+  border: 0;
+  border-bottom: 1px solid rgba(0, 59, 145, 0.06);
+}
+
+.fiboPanel button:hover {
+  background: #f4f8ff;
+}
+
+.fiboPanel strong {
+  color: #00276d;
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.fiboPanel span {
+  color: #5f6c81;
+  font-size: 12px;
+}
+
+.sortSelect {
+  min-height: 50px;
+  padding: 0 14px;
+  color: #405069;
+  font-size: 13px;
+  font-weight: 850;
+  background: #ffffff;
+  border: 1px solid rgba(0, 59, 145, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 10px 26px rgba(0, 38, 92, 0.05);
+}
+
 .search {
   min-height: 48px;
   padding: 0 16px;
@@ -118,6 +299,12 @@
   padding-bottom: 68px;
 }
 
+.productGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
 .card {
   display: grid;
   min-width: 0;
@@ -127,6 +314,16 @@
   border: 1px solid rgba(0, 59, 145, 0.09);
   border-radius: 14px;
   box-shadow: 0 10px 26px rgba(0, 38, 92, 0.07);
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.card:hover {
+  border-color: rgba(0, 59, 145, 0.18);
+  box-shadow: 0 16px 34px rgba(0, 38, 92, 0.1);
+  transform: translateY(-2px);
 }
 
 .media {
@@ -187,6 +384,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 9px;
+  align-items: center;
+  justify-content: space-between;
   margin-top: 6px;
 }
 
@@ -214,6 +413,50 @@
   color: #003b91;
   background: #eef5ff;
   border: 1px solid rgba(0, 59, 145, 0.1);
+}
+
+.whatsappIcon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 950;
+  background: #22c55e;
+  border-radius: 999px;
+  box-shadow: 0 10px 18px rgba(34, 197, 94, 0.2);
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 34px;
+}
+
+.pageButton,
+.pageButtonActive {
+  display: grid;
+  min-width: 34px;
+  height: 34px;
+  place-items: center;
+  color: #003b91;
+  font-size: 13px;
+  font-weight: 950;
+  background: #ffffff;
+  border: 1px solid rgba(0, 59, 145, 0.12);
+  border-radius: 8px;
+}
+
+.pageButtonActive {
+  color: #ffffff;
+  background: #003b91;
+}
+
+.pageButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 
 .detail {
@@ -376,7 +619,21 @@
 }
 
 @media (max-width: 900px) {
+  .catalogLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .catalogTools {
+    grid-template-columns: 1fr;
+  }
+
   .grid,
+  .productGrid,
   .recommendations {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -392,9 +649,19 @@
   }
 
   .grid,
+  .productGrid,
   .facts,
   .recommendations {
     grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .catalogLayout {
+    gap: 18px;
+    padding-bottom: 58px;
   }
 
   .toolbar {

@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 
 import { AndesProductCard } from "@/components/AndesProductCard";
-import { AndesSearch } from "@/components/AndesSearch";
 import type { AndesProduct } from "@/data/productos";
 import styles from "@/components/AndesInternal.module.css";
 
@@ -11,6 +10,8 @@ type AndesCatalogProps = {
   products: AndesProduct[];
   categories: string[];
 };
+
+const PAGE_SIZE = 6;
 
 function normalize(value: string) {
   return value
@@ -22,52 +23,186 @@ function normalize(value: string) {
 export function AndesCatalog({ products, categories }: AndesCatalogProps) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Todos");
+  const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState("destacados");
+  const [page, setPage] = useState(1);
+
+  const conditions = useMemo(
+    () => Array.from(new Set(products.map((product) => product.condicionVenta))).sort(),
+    [products]
+  );
+
+  function updateQuery(value: string) {
+    setQuery(value);
+    setPage(1);
+  }
+
+  function updateCategory(value: string) {
+    setCategory(value);
+    setPage(1);
+  }
+
+  function toggleCondition(value: string) {
+    setSelectedConditions((current) =>
+      current.includes(value) ? current.filter((condition) => condition !== value) : [...current, value]
+    );
+    setPage(1);
+  }
 
   const filteredProducts = useMemo(() => {
     const normalizedQuery = normalize(query.trim());
 
-    return products.filter((product) => {
+    const matches = products.filter((product) => {
       const matchesCategory = category === "Todos" || product.categoria === category;
+      const matchesCondition =
+        !selectedConditions.length || selectedConditions.includes(product.condicionVenta);
       const searchable = normalize(
-        [product.nombre, product.categoria, product.principioActivo, product.formato].join(" ")
+        [product.nombre, product.categoria, product.principioActivo, product.formato, product.condicionVenta].join(" ")
       );
 
-      return matchesCategory && (!normalizedQuery || searchable.includes(normalizedQuery));
+      return matchesCategory && matchesCondition && (!normalizedQuery || searchable.includes(normalizedQuery));
     });
-  }, [category, products, query]);
+
+    return [...matches].sort((a, b) => {
+      if (sortBy === "nombre") return a.nombre.localeCompare(b.nombre);
+      if (sortBy === "precio-menor") return (a.precio ?? Number.MAX_SAFE_INTEGER) - (b.precio ?? Number.MAX_SAFE_INTEGER);
+      if (sortBy === "precio-mayor") return (b.precio ?? 0) - (a.precio ?? 0);
+      return products.indexOf(a) - products.indexOf(b);
+    });
+  }, [category, products, query, selectedConditions, sortBy]);
+
+  const suggestions = useMemo(() => {
+    const normalizedQuery = normalize(query.trim());
+    if (normalizedQuery.length < 2) return [];
+
+    return products
+      .filter((product) =>
+        normalize([product.nombre, product.categoria, product.principioActivo].join(" ")).includes(normalizedQuery)
+      )
+      .slice(0, 5);
+  }, [products, query]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const visibleProducts = filteredProducts.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
-    <>
-      <div className={styles.toolbar}>
-        <AndesSearch
-          label="Buscar productos"
-          placeholder="Buscar por nombre, categoria o principio activo..."
-          value={query}
-          onChange={setQuery}
-        />
-        <div className={styles.filters} aria-label="Filtros por categoria">
-          {["Todos", ...categories].map((item) => (
-            <button
-              className={`${styles.filter} ${category === item ? styles.filterActive : ""}`}
-              key={item}
-              type="button"
-              onClick={() => setCategory(item)}
-            >
-              {item}
-            </button>
-          ))}
+    <div className={styles.catalogLayout}>
+      <aside className={styles.sidebar} aria-label="Filtros de productos">
+        <div className={styles.sidebarGroup}>
+          <h2>Categorias</h2>
+          <div className={styles.sidebarList}>
+            {["Todos", ...categories].map((item) => (
+              <button
+                className={`${styles.sidebarButton} ${category === item ? styles.sidebarButtonActive : ""}`}
+                key={item}
+                type="button"
+                onClick={() => updateCategory(item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      {filteredProducts.length ? (
-        <div className={styles.grid}>
-          {filteredProducts.map((product) => (
-            <AndesProductCard key={product.id} product={product} />
-          ))}
+        <div className={styles.sidebarGroup}>
+          <h2>Condicion de venta</h2>
+          <div className={styles.checkboxList}>
+            {conditions.map((condition) => (
+              <label key={condition} className={styles.checkboxItem}>
+                <input
+                  type="checkbox"
+                  checked={selectedConditions.includes(condition)}
+                  onChange={() => toggleCondition(condition)}
+                />
+                <span>{condition}</span>
+              </label>
+            ))}
+          </div>
         </div>
-      ) : (
-        <div className={styles.empty}>No encontramos productos para esta busqueda. Escribenos por WhatsApp.</div>
-      )}
-    </>
+      </aside>
+
+      <section className={styles.productArea} aria-label="Listado de productos">
+        <div className={styles.catalogTools}>
+          <div className={styles.fiboSearch}>
+            <label className="sr-only" htmlFor="product-fibo-search">
+              Buscar producto
+            </label>
+            <input
+              id="product-fibo-search"
+              type="search"
+              value={query}
+              placeholder="Buscar producto..."
+              autoComplete="off"
+              onChange={(event) => updateQuery(event.target.value)}
+            />
+            <button type="button" aria-label="Buscar productos">
+              Buscar
+            </button>
+
+            {suggestions.length ? (
+              <div className={styles.fiboPanel}>
+                {suggestions.map((product) => (
+                  <button key={product.id} type="button" onClick={() => updateQuery(product.nombre)}>
+                    <strong>{product.nombre}</strong>
+                    <span>{product.categoria} - {product.principioActivo}</span>
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+
+          <select
+            className={styles.sortSelect}
+            value={sortBy}
+            aria-label="Ordenar productos"
+            onChange={(event) => {
+              setSortBy(event.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="destacados">Ordenar: Destacados</option>
+            <option value="nombre">Ordenar: Nombre</option>
+            <option value="precio-menor">Precio menor</option>
+            <option value="precio-mayor">Precio mayor</option>
+          </select>
+        </div>
+
+        {visibleProducts.length ? (
+          <>
+            <div className={styles.productGrid}>
+              {visibleProducts.map((product) => (
+                <AndesProductCard key={product.id} product={product} />
+              ))}
+            </div>
+
+            {totalPages > 1 ? (
+              <nav className={styles.pagination} aria-label="Paginacion de productos">
+                {Array.from({ length: totalPages }, (_, index) => index + 1).map((item) => (
+                  <button
+                    key={item}
+                    type="button"
+                    className={currentPage === item ? styles.pageButtonActive : styles.pageButton}
+                    onClick={() => setPage(item)}
+                  >
+                    {item}
+                  </button>
+                ))}
+                <button
+                  type="button"
+                  className={styles.pageButton}
+                  disabled={currentPage === totalPages}
+                  onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
+                >
+                  &gt;
+                </button>
+              </nav>
+            ) : null}
+          </>
+        ) : (
+          <div className={styles.empty}>No encontramos productos para esta busqueda. Escribenos por WhatsApp.</div>
+        )}
+      </section>
+    </div>
   );
 }

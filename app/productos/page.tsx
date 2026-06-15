@@ -5,7 +5,7 @@ import { categoriasProductos, productos } from "@/data/productos";
 import styles from "@/components/AndesInternal.module.css";
 
 export const metadata: Metadata = {
-  title: "Catalogo de productos | Farmacia Andes",
+  title: "Nuestros productos | Farmacia Andes",
   description: "Consulta productos disponibles y comunicate con Farmacia Andes para confirmar stock."
 };
 
@@ -15,7 +15,7 @@ export default function ProductosPage() {
       <div className={styles.shell}>
         <section className={styles.hero}>
           <span className={styles.kicker}>Catalogo consultivo</span>
-          <h1>Catalogo de productos</h1>
+          <h1>Nuestros productos</h1>
           <p>Consulta productos disponibles y comunicate con Farmacia Andes para confirmar stock.</p>
         </section>
 

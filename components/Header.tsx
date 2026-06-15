@@ -1,11 +1,13 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { farmacia } from "@/data/site";
 import { Logo } from "@/components/Logo";
 
 const navItems = [
   { href: "#catalogo", label: "Inicio" },
+  { href: "/productos", label: "Productos" },
   { href: "#medicamentos", label: "Medicamentos" },
   { href: "#cuidado-personal", label: "Cuidado personal" },
   { href: "#salud-bienestar", label: "Salud y bienestar" },
@@ -39,11 +41,17 @@ export function Header() {
         </a>
 
         <nav className={`site-nav-links ${isOpen ? "open" : ""}`} aria-label="Navegacion principal">
-          {navItems.map((item) => (
-            <a key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
-              {item.label}
-            </a>
-          ))}
+          {navItems.map((item) =>
+            item.href.startsWith("/") ? (
+              <Link key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
+                {item.label}
+              </Link>
+            ) : (
+              <a key={item.href} href={item.href} onClick={() => setIsOpen(false)}>
+                {item.label}
+              </a>
+            )
+          )}
         </nav>
 
         <div className="site-nav-actions">

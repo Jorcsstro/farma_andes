@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
@@ -373,6 +374,7 @@ export function AndesHome({ products }: AndesHomeProps) {
 
         <nav className="andes-nav" aria-label="Navegación principal">
           <a href="#inicio">Inicio</a>
+          <Link href="/productos">Productos</Link>
           <a href="#catalogo">Medicamentos</a>
           <a href="#cuidado-personal">Cuidado personal</a>
           <a href="#salud-bienestar">Salud y bienestar</a>
@@ -814,7 +816,7 @@ export function AndesHome({ products }: AndesHomeProps) {
             </div>
 
             <div className="andes-info-grid">
-              <a href="/vademecum/" className="andes-info-card">
+              <Link href="/vademecum" className="andes-info-card">
                 <div className="andes-info-icon">Rx</div>
                 <h3>Vademecum</h3>
                 <p>
@@ -822,9 +824,9 @@ export function AndesHome({ products }: AndesHomeProps) {
                   activos, presentaciones y recomendaciones generales.
                 </p>
                 <span>Ver vademecum &rarr;</span>
-              </a>
+              </Link>
 
-              <a href="/uso-racional-de-medicamentos/" className="andes-info-card">
+              <Link href="/uso-racional-de-medicamentos" className="andes-info-card">
                 <div className="andes-info-icon">+</div>
                 <h3>Uso racional de medicamentos</h3>
                 <p>
@@ -832,7 +834,7 @@ export function AndesHome({ products }: AndesHomeProps) {
                   duplicidad de tratamientos y uso incorrecto de farmacos.
                 </p>
                 <span>Ver recomendaciones &rarr;</span>
-              </a>
+              </Link>
             </div>
           </div>
         </section>
