@@ -357,51 +357,7 @@ export function AndesHome({ products }: AndesHomeProps) {
 
   return (
     <div className="andes-site" id="inicio">
-      <header className="andes-header">
-        <a
-          className="andes-brand"
-          href="#inicio"
-          aria-label="Farmacia Andes inicio"
-        >
-          <Image
-            src="/identidad-visual/02%20Horizontal%20Blanco%20Naranjo.png"
-            alt="Farmacia Andes"
-            width={188}
-            height={48}
-            priority
-          />
-        </a>
-
-        <nav className="andes-nav" aria-label="Navegación principal">
-          <a href="#inicio">Inicio</a>
-          <Link href="/productos">Productos</Link>
-          <a href="#catalogo">Medicamentos</a>
-          <a href="#cuidado-personal">Cuidado personal</a>
-          <a href="#salud-bienestar">Salud y bienestar</a>
-          <a href="#ofertas">Ofertas</a>
-          <a href="#contacto">Contacto</a>
-        </nav>
-
-        <div className="andes-header-actions">
-          <a
-            className="andes-whatsapp-pill"
-            href={buildWhatsappMessage(
-              "Hola Farmacia Andes, quiero cotizar un producto."
-            )}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              src="/icons/whatsapp.svg"
-              alt=""
-              width={18}
-              height={18}
-              aria-hidden="true"
-            />
-            Cotizar por WhatsApp
-          </a>
-        </div>
-      </header>
+    
 
       <main>
         <section className="andes-hero">

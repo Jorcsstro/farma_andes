@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { AndesProductCard } from "@/components/AndesProductCard";
 import type { AndesProduct } from "@/data/productos";
@@ -9,6 +9,7 @@ import styles from "@/components/AndesInternal.module.css";
 type AndesCatalogProps = {
   products: AndesProduct[];
   categories: string[];
+  initialCategory?: string;
 };
 
 const PAGE_SIZE = 6;
@@ -17,18 +18,50 @@ function normalize(value: string) {
   return value
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
+    .toLowerCase()
+    .trim();
 }
 
-export function AndesCatalog({ products, categories }: AndesCatalogProps) {
+function slugify(value: string) {
+  return normalize(value)
+    .replace(/&/g, "y")
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "");
+}
+
+function getCategoryFromSlug(categories: string[], categorySlug?: string) {
+  if (!categorySlug || categorySlug === "todos") return "Todos";
+
+  const matchedCategory = categories.find(
+    (category) => slugify(category) === categorySlug
+  );
+
+  return matchedCategory ?? "Todos";
+}
+
+export function AndesCatalog({
+  products,
+  categories,
+  initialCategory = "todos",
+}: AndesCatalogProps) {
   const [query, setQuery] = useState("");
-  const [category, setCategory] = useState("Todos");
+  const [category, setCategory] = useState(() =>
+    getCategoryFromSlug(categories, initialCategory)
+  );
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState("destacados");
   const [page, setPage] = useState(1);
 
+  useEffect(() => {
+    setCategory(getCategoryFromSlug(categories, initialCategory));
+    setPage(1);
+  }, [categories, initialCategory]);
+
   const conditions = useMemo(
-    () => Array.from(new Set(products.map((product) => product.condicionVenta))).sort(),
+    () =>
+      Array.from(
+        new Set(products.map((product) => product.condicionVenta))
+      ).sort(),
     [products]
   );
 
@@ -44,57 +77,101 @@ export function AndesCatalog({ products, categories }: AndesCatalogProps) {
 
   function toggleCondition(value: string) {
     setSelectedConditions((current) =>
-      current.includes(value) ? current.filter((condition) => condition !== value) : [...current, value]
+      current.includes(value)
+        ? current.filter((condition) => condition !== value)
+        : [...current, value]
     );
     setPage(1);
   }
 
   const filteredProducts = useMemo(() => {
-    const normalizedQuery = normalize(query.trim());
+    const normalizedQuery = normalize(query);
 
     const matches = products.filter((product) => {
-      const matchesCategory = category === "Todos" || product.categoria === category;
+      const matchesCategory =
+        category === "Todos" || product.categoria === category;
+
       const matchesCondition =
-        !selectedConditions.length || selectedConditions.includes(product.condicionVenta);
+        !selectedConditions.length ||
+        selectedConditions.includes(product.condicionVenta);
+
       const searchable = normalize(
-        [product.nombre, product.categoria, product.principioActivo, product.formato, product.condicionVenta].join(" ")
+        [
+          product.nombre,
+          product.categoria,
+          product.principioActivo,
+          product.formato,
+          product.condicionVenta,
+        ].join(" ")
       );
 
-      return matchesCategory && matchesCondition && (!normalizedQuery || searchable.includes(normalizedQuery));
+      return (
+        matchesCategory &&
+        matchesCondition &&
+        (!normalizedQuery || searchable.includes(normalizedQuery))
+      );
     });
 
     return [...matches].sort((a, b) => {
-      if (sortBy === "nombre") return a.nombre.localeCompare(b.nombre);
-      if (sortBy === "precio-menor") return (a.precio ?? Number.MAX_SAFE_INTEGER) - (b.precio ?? Number.MAX_SAFE_INTEGER);
-      if (sortBy === "precio-mayor") return (b.precio ?? 0) - (a.precio ?? 0);
+      if (sortBy === "nombre") {
+        return a.nombre.localeCompare(b.nombre);
+      }
+
+      if (sortBy === "precio-menor") {
+        return (
+          (a.precio ?? Number.MAX_SAFE_INTEGER) -
+          (b.precio ?? Number.MAX_SAFE_INTEGER)
+        );
+      }
+
+      if (sortBy === "precio-mayor") {
+        return (b.precio ?? 0) - (a.precio ?? 0);
+      }
+
       return products.indexOf(a) - products.indexOf(b);
     });
   }, [category, products, query, selectedConditions, sortBy]);
 
   const suggestions = useMemo(() => {
-    const normalizedQuery = normalize(query.trim());
+    const normalizedQuery = normalize(query);
+
     if (normalizedQuery.length < 2) return [];
 
     return products
       .filter((product) =>
-        normalize([product.nombre, product.categoria, product.principioActivo].join(" ")).includes(normalizedQuery)
+        normalize(
+          [product.nombre, product.categoria, product.principioActivo].join(
+            " "
+          )
+        ).includes(normalizedQuery)
       )
       .slice(0, 5);
   }, [products, query]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredProducts.length / PAGE_SIZE)
+  );
+
   const currentPage = Math.min(page, totalPages);
-  const visibleProducts = filteredProducts.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+
+  const visibleProducts = filteredProducts.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
 
   return (
     <div className={styles.catalogLayout}>
       <aside className={styles.sidebar} aria-label="Filtros de productos">
         <div className={styles.sidebarGroup}>
-          <h2>Categorias</h2>
+          <h2>Categorías</h2>
+
           <div className={styles.sidebarList}>
             {["Todos", ...categories].map((item) => (
               <button
-                className={`${styles.sidebarButton} ${category === item ? styles.sidebarButtonActive : ""}`}
+                className={`${styles.sidebarButton} ${
+                  category === item ? styles.sidebarButtonActive : ""
+                }`}
                 key={item}
                 type="button"
                 onClick={() => updateCategory(item)}
@@ -106,7 +183,8 @@ export function AndesCatalog({ products, categories }: AndesCatalogProps) {
         </div>
 
         <div className={styles.sidebarGroup}>
-          <h2>Condicion de venta</h2>
+          <h2>Condición de venta</h2>
+
           <div className={styles.checkboxList}>
             {conditions.map((condition) => (
               <label key={condition} className={styles.checkboxItem}>
@@ -128,6 +206,7 @@ export function AndesCatalog({ products, categories }: AndesCatalogProps) {
             <label className="sr-only" htmlFor="product-fibo-search">
               Buscar producto
             </label>
+
             <input
               id="product-fibo-search"
               type="search"
@@ -136,6 +215,7 @@ export function AndesCatalog({ products, categories }: AndesCatalogProps) {
               autoComplete="off"
               onChange={(event) => updateQuery(event.target.value)}
             />
+
             <button type="button" aria-label="Buscar productos">
               Buscar
             </button>
@@ -143,9 +223,15 @@ export function AndesCatalog({ products, categories }: AndesCatalogProps) {
             {suggestions.length ? (
               <div className={styles.fiboPanel}>
                 {suggestions.map((product) => (
-                  <button key={product.id} type="button" onClick={() => updateQuery(product.nombre)}>
+                  <button
+                    key={product.id}
+                    type="button"
+                    onClick={() => updateQuery(product.nombre)}
+                  >
                     <strong>{product.nombre}</strong>
-                    <span>{product.categoria} - {product.principioActivo}</span>
+                    <span>
+                      {product.categoria} - {product.principioActivo}
+                    </span>
                   </button>
                 ))}
               </div>
@@ -177,22 +263,35 @@ export function AndesCatalog({ products, categories }: AndesCatalogProps) {
             </div>
 
             {totalPages > 1 ? (
-              <nav className={styles.pagination} aria-label="Paginacion de productos">
-                {Array.from({ length: totalPages }, (_, index) => index + 1).map((item) => (
+              <nav
+                className={styles.pagination}
+                aria-label="Paginación de productos"
+              >
+                {Array.from(
+                  { length: totalPages },
+                  (_, index) => index + 1
+                ).map((item) => (
                   <button
                     key={item}
                     type="button"
-                    className={currentPage === item ? styles.pageButtonActive : styles.pageButton}
+                    className={
+                      currentPage === item
+                        ? styles.pageButtonActive
+                        : styles.pageButton
+                    }
                     onClick={() => setPage(item)}
                   >
                     {item}
                   </button>
                 ))}
+
                 <button
                   type="button"
                   className={styles.pageButton}
                   disabled={currentPage === totalPages}
-                  onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
+                  onClick={() =>
+                    setPage((value) => Math.min(totalPages, value + 1))
+                  }
                 >
                   &gt;
                 </button>
@@ -200,7 +299,10 @@ export function AndesCatalog({ products, categories }: AndesCatalogProps) {
             ) : null}
           </>
         ) : (
-          <div className={styles.empty}>No encontramos productos para esta busqueda. Escribenos por WhatsApp.</div>
+          <div className={styles.empty}>
+            No encontramos productos para esta búsqueda. Escríbenos por
+            WhatsApp.
+          </div>
         )}
       </section>
     </div>
