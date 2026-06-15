@@ -3557,6 +3557,11 @@ h1 {
   --andes-muted: #5f6c81;
   --andes-line: rgba(0, 59, 145, 0.12);
   --andes-shadow: 0 18px 45px rgba(0, 38, 92, 0.13);
+  --andes-section-gap: clamp(76px, 7.5vw, 104px);
+  --andes-section-gap-tight: clamp(56px, 5.5vw, 76px);
+  --andes-title-size: clamp(26px, 2.9vw, 34px);
+  --andes-title-large-size: clamp(30px, 3.6vw, 40px);
+  --andes-body-size: 15px;
 
   min-height: 100svh;
   color: var(--andes-text);
@@ -4077,7 +4082,7 @@ h1 {
 
 .andes-site .andes-featured-brands {
   background: #ffffff;
-  padding: 72px 0 24px;
+  padding: 72px 0 34px;
   text-align: center;
 }
 
@@ -4149,6 +4154,7 @@ h1 {
 }
 
 .andes-request-banner,
+.andes-winter-season,
 .andes-location-vademecum,
 .andes-info-section,
 .andes-catalog,
@@ -4167,7 +4173,7 @@ h1 {
   gap: 24px;
   align-items: center;
   padding: 32px 36px;
-  margin-top: 80px;
+  margin-top: var(--andes-section-gap-tight);
   scroll-margin-top: 96px;
   background:
     radial-gradient(circle at 10% 50%, rgba(0, 59, 145, 0.07), transparent 30%),
@@ -4175,6 +4181,10 @@ h1 {
   border: 1px solid rgba(0, 59, 145, 0.08);
   border-radius: 16px;
   box-shadow: 0 10px 32px rgba(0, 48, 117, 0.06);
+}
+
+.andes-winter-season + .andes-request-banner {
+  margin-top: var(--andes-section-gap-tight);
 }
 
 .andes-request-visual {
@@ -4214,9 +4224,9 @@ h1 {
 .andes-contact h2 {
   margin: 0;
   color: var(--andes-blue-dark);
-  font-size: clamp(28px, 3.6vw, 36px);
+  font-size: var(--andes-title-size);
   font-weight: 950;
-  line-height: 1.06;
+  line-height: 1.08;
   letter-spacing: 0;
 }
 
@@ -4231,6 +4241,7 @@ h1 {
 .andes-contact p {
   margin: 12px 0 0;
   color: #2e3a4e;
+  font-size: var(--andes-body-size);
   line-height: 1.55;
 }
 
@@ -4268,37 +4279,239 @@ h1 {
   font-weight: 800;
 }
 
+.andes-winter-season {
+  padding: var(--andes-section-gap-tight) 0 0;
+}
+
+.andes-winter-banner-shell {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.andes-winter-banner-shell::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 28px 22px #ffffff;
+}
+
+.andes-winter-banner {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.andes-winter-head {
+  display: flex;
+  gap: 18px;
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.andes-winter-head span {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  padding: 5px 12px;
+  color: var(--andes-blue);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: rgba(245, 130, 0, 0.11);
+  border-radius: 999px;
+}
+
+.andes-winter-head h2 {
+  max-width: 620px;
+  margin: 12px 0 0;
+  color: var(--andes-blue-dark);
+  font-size: var(--andes-title-size);
+  font-weight: 950;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.andes-winter-head p {
+  max-width: 660px;
+  margin: 8px 0 0;
+  color: #344155;
+  font-size: var(--andes-body-size);
+  line-height: 1.5;
+}
+
+.andes-winter-actions {
+  display: flex;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.andes-winter-actions button {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  color: var(--andes-blue);
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1;
+  background: #ffffff;
+  border: 1px solid rgba(0, 59, 145, 0.14);
+  border-radius: 999px;
+  box-shadow: 0 10px 22px rgba(0, 38, 92, 0.08);
+}
+
+.andes-winter-actions button:hover,
+.andes-winter-actions button:focus-visible {
+  color: #ffffff;
+  background: var(--andes-blue);
+  outline: none;
+}
+
+.andes-winter-track {
+  display: grid;
+  grid-auto-columns: minmax(190px, 214px);
+  grid-auto-flow: column;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 4px 2px 18px;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.andes-winter-track::-webkit-scrollbar {
+  display: none;
+}
+
+.andes-winter-card {
+  scroll-snap-align: start;
+}
+
+.andes-winter-card a {
+  display: grid;
+  min-height: 286px;
+  overflow: hidden;
+  color: #20324d;
+  background: #ffffff;
+  border: 1px solid rgba(0, 59, 145, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 12px 28px rgba(0, 38, 92, 0.07);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.andes-winter-card a:hover,
+.andes-winter-card a:focus-visible {
+  color: #20324d;
+  border-color: rgba(0, 59, 145, 0.2);
+  box-shadow: 0 16px 34px rgba(0, 38, 92, 0.11);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+.andes-winter-media {
+  display: grid;
+  height: 128px;
+  place-items: center;
+  padding: 16px;
+  background: linear-gradient(180deg, #f5f9ff, #ffffff);
+}
+
+.andes-winter-media img {
+  max-width: 100%;
+  max-height: 106px;
+  object-fit: contain;
+}
+
+.andes-winter-info {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  padding: 14px;
+}
+
+.andes-winter-info small {
+  min-height: 14px;
+  color: #738198;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.andes-winter-info strong {
+  display: -webkit-box;
+  min-height: 44px;
+  overflow: hidden;
+  color: var(--andes-blue-dark);
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.andes-winter-info span {
+  color: var(--andes-blue);
+  font-size: 18px;
+  font-weight: 950;
+}
+
+.andes-winter-info em {
+  width: fit-content;
+  padding: 5px 9px;
+  color: #1d6d39;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 900;
+  background: rgba(37, 211, 102, 0.1);
+  border-radius: 999px;
+}
+
 .andes-catalog,
 .andes-wellness,
 .andes-offers,
 .andes-split-section,
 .andes-contact {
-  padding-top: 112px;
+  padding-top: var(--andes-section-gap);
   scroll-margin-top: 96px;
 }
 
 .andes-site .andes-featured-brands + .andes-catalog {
-  padding-top: 56px;
+  padding-top: var(--andes-section-gap-tight);
 }
 
 .andes-location-vademecum {
   display: grid;
+  width: min(100% - 32px, 1180px);
   gap: 22px;
-  padding-top: 104px;
+  padding-top: var(--andes-section-gap);
   scroll-margin-top: 96px;
 }
 
 .andes-location-card {
   display: grid;
-  grid-template-columns: minmax(280px, 0.8fr) minmax(0, 1.2fr);
-  gap: 28px;
-  align-items: stretch;
+  grid-template-columns: minmax(0, 1.13fr) minmax(390px, 0.87fr);
+  gap: clamp(28px, 4vw, 46px);
+  align-items: center;
+}
+
+.andes-location-left {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
 }
 
 .andes-location-copy {
   display: grid;
   align-content: center;
-  gap: 10px;
+  gap: 12px;
+  max-width: 560px;
 }
 
 .andes-location-copy > span {
@@ -4311,12 +4524,12 @@ h1 {
 }
 
 .andes-location-copy h2 {
-  max-width: 430px;
+  max-width: 520px;
   margin: 0;
   color: var(--andes-blue-dark);
-  font-size: clamp(27px, 3vw, 36px);
+  font-size: var(--andes-title-large-size);
   font-weight: 950;
-  line-height: 1.05;
+  line-height: 1.04;
   letter-spacing: 0;
 }
 
@@ -4328,32 +4541,32 @@ h1 {
   max-width: 460px;
   margin: 0;
   color: #344155;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: var(--andes-body-size);
+  line-height: 1.55;
 }
 
 .andes-location-details {
   display: grid;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 16px;
+  margin-top: 16px;
   color: #26344b;
-  font-size: 14px;
-  font-weight: 750;
+  font-size: 16px;
+  font-weight: 850;
 }
 
 .andes-location-details a,
 .andes-location-details span {
   display: grid;
-  grid-template-columns: 30px minmax(0, 1fr);
-  gap: 9px;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 12px;
   align-items: start;
 }
 
 .andes-location-details i {
   position: relative;
   display: grid;
-  width: 26px;
-  height: 26px;
+  width: 32px;
+  height: 32px;
   place-items: center;
   color: var(--andes-blue);
   background: #f0f6ff;
@@ -4387,6 +4600,244 @@ h1 {
   height: 2px;
   background: currentColor;
   border-radius: 999px;
+}
+
+.andes-location-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.andes-location-contact-card {
+  display: grid;
+  min-height: 116px;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 13px;
+  align-items: center;
+  padding: 17px;
+  color: #24344f;
+  background: #ffffff;
+  border: 1px solid rgba(0, 59, 145, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 16px 34px rgba(0, 38, 92, 0.07);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.andes-location-contact-card:hover,
+.andes-location-contact-card:focus-visible {
+  color: #24344f;
+  border-color: rgba(0, 59, 145, 0.22);
+  box-shadow: 0 18px 38px rgba(0, 38, 92, 0.1);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+.andes-location-contact-card strong {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--andes-blue);
+  font-size: 16px;
+  font-weight: 950;
+  line-height: 1.1;
+}
+
+.andes-location-contact-card span:last-child {
+  min-width: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.andes-location-contact-icon {
+  position: relative;
+  display: grid;
+  width: 46px;
+  height: 46px;
+  place-items: center;
+  color: var(--andes-blue);
+  background: #f1f7ff;
+  border: 1px solid rgba(0, 59, 145, 0.12);
+  border-radius: 15px;
+}
+
+.andes-location-contact-icon::before,
+.andes-location-contact-icon::after {
+  content: "";
+  position: absolute;
+}
+
+.andes-location-contact-icon--pin::before {
+  top: 12px;
+  width: 11px;
+  height: 11px;
+  background: #e9425f;
+  border-radius: 999px;
+}
+
+.andes-location-contact-icon--pin::after {
+  top: 21px;
+  width: 2px;
+  height: 18px;
+  background: #253650;
+  border-radius: 999px;
+  box-shadow: 0 18px 0 -1px #253650;
+}
+
+.andes-location-contact-icon--mail::before {
+  width: 23px;
+  height: 16px;
+  background:
+    linear-gradient(135deg, transparent 47%, #7d8ca4 48% 52%, transparent 53%),
+    linear-gradient(45deg, transparent 47%, #7d8ca4 48% 52%, transparent 53%),
+    #ffffff;
+  border: 2px solid #9babc0;
+  border-radius: 3px;
+}
+
+.andes-location-contact-icon--clock::before {
+  width: 22px;
+  height: 22px;
+  border: 3px solid #e9425f;
+  border-radius: 999px;
+}
+
+.andes-location-contact-icon--clock::after {
+  width: 8px;
+  height: 8px;
+  border-bottom: 3px solid var(--andes-orange);
+  border-left: 3px solid var(--andes-orange);
+  transform: translate(2px, -2px);
+}
+
+.andes-location-contact-icon--whatsapp::before {
+  width: 25px;
+  height: 18px;
+  background: #a9d9f5;
+  border-radius: 999px;
+}
+
+.andes-location-contact-icon--whatsapp::after {
+  width: 17px;
+  height: 4px;
+  background:
+    radial-gradient(circle, var(--andes-blue) 2px, transparent 2.5px) 0 0 / 6px 4px repeat-x;
+}
+
+.andes-map-card {
+  display: grid;
+  width: 100%;
+  max-width: 500px;
+  justify-self: end;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid rgba(0, 59, 145, 0.12);
+  border-radius: 22px;
+  box-shadow: 0 20px 44px rgba(0, 38, 92, 0.1);
+}
+
+.andes-map-head {
+  display: grid;
+  gap: 8px;
+  padding: 26px 32px 20px;
+}
+
+.andes-map-head h2 {
+  margin: 0;
+  color: var(--andes-blue);
+  font-size: clamp(30px, 2.9vw, 38px);
+  font-weight: 950;
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.andes-map-head p {
+  margin: 0;
+  color: #40516e;
+  max-width: 620px;
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.andes-map-frame {
+  position: relative;
+  min-height: 318px;
+  overflow: hidden;
+  background: #eef4fb;
+}
+
+.andes-map-frame iframe {
+  display: block;
+  width: 100%;
+  height: 318px;
+  border: 0;
+}
+
+.andes-map-open {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 13px;
+  color: var(--andes-blue);
+  font-size: 12px;
+  font-weight: 950;
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid rgba(0, 59, 145, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 10px 22px rgba(0, 38, 92, 0.12);
+}
+
+.andes-map-open:hover,
+.andes-map-open:focus-visible {
+  color: var(--andes-blue);
+  outline: 3px solid rgba(0, 59, 145, 0.14);
+  outline-offset: 2px;
+}
+
+.andes-map-summary {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  padding: 20px 32px;
+  background: #f6f9fd;
+  border-top: 1px solid rgba(0, 59, 145, 0.08);
+}
+
+.andes-map-summary > span {
+  display: grid;
+  width: 50px;
+  height: 50px;
+  place-items: center;
+  color: var(--andes-orange);
+  font-size: 27px;
+  font-weight: 950;
+  line-height: 1;
+  background: #ffffff;
+  border: 1px solid rgba(0, 59, 145, 0.12);
+  border-radius: 16px;
+  box-shadow: 0 10px 22px rgba(0, 38, 92, 0.06);
+}
+
+.andes-map-summary strong {
+  display: block;
+  color: var(--andes-blue);
+  font-size: 18px;
+  font-weight: 950;
+  line-height: 1.18;
+}
+
+.andes-map-summary p {
+  margin: 6px 0 0;
+  color: #344155;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .andes-mini-map {
@@ -4505,7 +4956,7 @@ h1 {
 }
 
 .andes-info-section {
-  padding-top: 56px;
+  padding-top: var(--andes-section-gap-tight);
   scroll-margin-top: 96px;
 }
 
@@ -4542,16 +4993,16 @@ h1 {
 .andes-info-header h2 {
   margin: 0;
   color: var(--andes-blue-dark);
-  font-size: clamp(27px, 3vw, 36px);
+  font-size: var(--andes-title-size);
   font-weight: 950;
-  line-height: 1.05;
+  line-height: 1.08;
   letter-spacing: 0;
 }
 
 .andes-info-header p {
   margin: 0;
   color: #344155;
-  font-size: 14px;
+  font-size: var(--andes-body-size);
   line-height: 1.55;
 }
 
@@ -4984,6 +5435,24 @@ h1 {
 
   .andes-location-card {
     grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .andes-location-left,
+  .andes-map-card {
+    width: 100%;
+    max-width: 760px;
+    justify-self: center;
+  }
+
+  .andes-location-copy {
+    max-width: 560px;
+  }
+
+  .andes-map-frame,
+  .andes-map-frame iframe {
+    height: 300px;
+    min-height: 300px;
   }
 
   .andes-mini-map {
@@ -5006,6 +5475,14 @@ h1 {
 }
 
 @media (max-width: 720px) {
+  .andes-site {
+    --andes-section-gap: 72px;
+    --andes-section-gap-tight: 56px;
+    --andes-title-size: clamp(24px, 7vw, 28px);
+    --andes-title-large-size: clamp(28px, 8vw, 34px);
+    --andes-body-size: 14px;
+  }
+
   .andes-header {
     width: 100%;
     margin-top: 0;
@@ -5094,13 +5571,13 @@ h1 {
   }
 
   .andes-site .andes-featured-brands {
-    padding: 58px 0 20px;
+    padding: 58px 0 28px;
   }
 
   .andes-request-banner {
     grid-template-columns: 1fr;
     padding: 28px 22px;
-    margin-top: 60px;
+    margin-top: var(--andes-section-gap-tight);
     scroll-margin-top: 130px;
   }
 
@@ -5111,6 +5588,41 @@ h1 {
 
   .andes-request-actions a {
     width: 100%;
+  }
+
+  .andes-winter-season {
+    padding-top: var(--andes-section-gap-tight);
+  }
+
+  .andes-winter-head {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .andes-winter-head h2 {
+    font-size: var(--andes-title-size);
+  }
+
+  .andes-winter-head p {
+    font-size: var(--andes-body-size);
+  }
+
+  .andes-winter-actions {
+    align-self: end;
+  }
+
+  .andes-winter-track {
+    grid-auto-columns: minmax(178px, 72vw);
+    gap: 12px;
+    padding-bottom: 14px;
+  }
+
+  .andes-winter-card a {
+    min-height: 270px;
+  }
+
+  .andes-winter-media {
+    height: 120px;
   }
 
   .andes-product-grid,
@@ -5125,21 +5637,88 @@ h1 {
   .andes-location-vademecum,
   .andes-contact,
   .andes-split-section {
-    padding-top: 80px;
+    padding-top: var(--andes-section-gap);
     scroll-margin-top: 130px;
   }
 
   .andes-site .andes-featured-brands + .andes-catalog {
-    padding-top: 42px;
+    padding-top: var(--andes-section-gap-tight);
   }
 
   .andes-location-card {
-    gap: 18px;
+    gap: 20px;
   }
 
-  .andes-location-copy h2,
-  .andes-info-header h2 {
+  .andes-location-contact-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .andes-location-contact-card {
+    min-height: 0;
+    grid-template-columns: 46px minmax(0, 1fr);
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .andes-location-contact-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+  }
+
+  .andes-location-contact-card strong {
+    font-size: 16px;
+  }
+
+  .andes-location-contact-card span:last-child {
+    font-size: 13px;
+  }
+
+  .andes-map-head {
+    padding: 24px 22px 18px;
+  }
+
+  .andes-map-head h2 {
     font-size: 28px;
+  }
+
+  .andes-map-head p {
+    font-size: 14px;
+  }
+
+  .andes-map-frame,
+  .andes-map-frame iframe {
+    height: 248px;
+    min-height: 248px;
+  }
+
+  .andes-map-summary {
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 14px;
+    padding: 20px 22px;
+  }
+
+  .andes-map-summary > span {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+  }
+
+  .andes-map-summary strong {
+    font-size: 16px;
+  }
+
+  .andes-map-summary p {
+    font-size: 13px;
+  }
+
+  .andes-location-copy h2 {
+    font-size: var(--andes-title-large-size);
+  }
+
+  .andes-info-header h2 {
+    font-size: var(--andes-title-size);
   }
 
   .andes-location-details {
@@ -5179,7 +5758,7 @@ h1 {
   }
 
   .andes-info-section {
-    padding-top: 44px;
+    padding-top: var(--andes-section-gap-tight);
   }
 
   .andes-info-container {
@@ -5792,4 +6371,3 @@ h1 {
   color: #f58200;
   background: #f5f8fc;
 }
-

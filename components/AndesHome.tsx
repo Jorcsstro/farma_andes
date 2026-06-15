@@ -82,6 +82,54 @@ const featuredBrands = [
   { name: "Dentaid", src: "/brands/dentaid.png" }
 ];
 
+const winterSeasonTerms = [
+  "ab antisep",
+  "ab antitusivo",
+  "abrilar",
+  "acemuk",
+  "antigripal",
+  "bisolvon",
+  "brontec",
+  "caramelos de propoleo",
+  "cetirizina",
+  "clorfenamina",
+  "desloratadina",
+  "fexofenadina",
+  "geniol",
+  "hiedrix",
+  "ibuprofeno",
+  "kitadol",
+  "knop palto miel",
+  "loratadina",
+  "mentholatum",
+  "mucolitico",
+  "nastizol",
+  "nastul",
+  "paracetamol",
+  "propoleo",
+  "suero fisiologico",
+  "tapsin",
+  "termometro",
+  "tocalm",
+  "vitamina c",
+  "vaporub",
+  "xumadol"
+];
+
+const winterPriorityTerms = [
+  "tapsin",
+  "geniol",
+  "paracetamol",
+  "ibuprofeno",
+  "abrilar",
+  "hiedrix",
+  "propoleo",
+  "vitamina c",
+  "loratadina",
+  "termometro",
+  "suero fisiologico"
+];
+
 
 function normalizeText(value: string) {
   return value
@@ -127,6 +175,30 @@ function productHasImage(product: Product) {
   const imageUrl = getProductImageUrl(product);
 
   return Boolean(imageUrl && !imageUrl.endsWith("/products/receta.svg"));
+}
+
+function isWinterSeasonProduct(product: Product) {
+  if (product.precio <= 0) {
+    return false;
+  }
+
+  const text = productText(product);
+
+  return winterSeasonTerms.some((term) => text.includes(normalizeText(term)));
+}
+
+function getWinterProductPriority(product: Product) {
+  const text = productText(product);
+  const matchedPriority = winterPriorityTerms.findIndex((term) =>
+    text.includes(normalizeText(term))
+  );
+
+  const termPriority = matchedPriority === -1 ? 30 : matchedPriority;
+  const imagePriority = productHasImage(product) ? -8 : 0;
+  const salePriority = product.requiereReceta ? 3 : 0;
+  const featuredPriority = product.destacado ? -2 : 0;
+
+  return termPriority + imagePriority + salePriority + featuredPriority;
 }
 
 function buildWhatsappMessage(message: string) {
@@ -232,6 +304,98 @@ function ProductTile({ product }: { product: Product }) {
   );
 }
 
+function WinterSeasonCarousel({ products }: { products: Product[] }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  function scrollByCard(direction: -1 | 1) {
+    const track = trackRef.current;
+
+    if (!track) {
+      return;
+    }
+
+    const firstCard = track.querySelector<HTMLElement>(".andes-winter-card");
+    const cardWidth = firstCard?.getBoundingClientRect().width ?? 220;
+    const columnGap = Number.parseFloat(window.getComputedStyle(track).columnGap || "16");
+
+    track.scrollBy({
+      behavior: "smooth",
+      left: direction * (cardWidth + columnGap) * 2
+    });
+  }
+
+  if (!products.length) {
+    return null;
+  }
+
+  return (
+    <section className="andes-winter-season" aria-label="Productos para temporada de invierno">
+      <div className="andes-winter-banner-shell">
+        <Image
+          className="andes-winter-banner"
+          src="/sections/invierno.png"
+          alt="Temporada de invierno Farmacia Andes: resfrio y fiebre, tos y garganta, defensas, cuidado e higiene."
+          width={2048}
+          height={682}
+          sizes="(max-width: 768px) calc(100vw - 32px), min(1180px, calc(100vw - 32px))"
+        />
+      </div>
+      <div className="andes-winter-head">
+        
+        <div>
+          
+          <span>Temporada invierno</span>
+          <h2>Productos para cuidarte en dias frios</h2>
+          <p>
+            Resfrio, tos, garganta, defensas y apoyo practico para consultar
+            disponibilidad por WhatsApp.
+          </p>
+        </div>
+
+        <div className="andes-winter-actions">
+          <button type="button" aria-label="Ver productos anteriores de invierno" onClick={() => scrollByCard(-1)}>
+            &lsaquo;
+          </button>
+          <button type="button" aria-label="Ver mas productos de invierno" onClick={() => scrollByCard(1)}>
+            &rsaquo;
+          </button>
+        </div>
+      </div>
+
+      <div className="andes-winter-track" ref={trackRef}>
+        {products.map((product) => {
+          const imageUrl = getProductImageUrl(product);
+          const isExternalImage = imageUrl.startsWith("http");
+
+          return (
+            <article className="andes-winter-card" key={product.id}>
+              <a href={buildProductWhatsappUrl(product)} target="_blank" rel="noopener noreferrer">
+                <span className="andes-winter-media">
+                  <Image
+                    src={imageUrl}
+                    alt=""
+                    width={180}
+                    height={132}
+                    aria-hidden="true"
+                    unoptimized={isExternalImage}
+                  />
+                </span>
+
+                <span className="andes-winter-info">
+                  <small>{product.marca || farmacia.nombre}</small>
+                  <strong>{product.nombre}</strong>
+                  <span>{formatCLP(product.precio)}</span>
+                  <em>{product.requiereReceta ? "Con receta" : "Venta libre"}</em>
+                </span>
+              </a>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 
 
 export function AndesHome({ products }: AndesHomeProps) {
@@ -298,15 +462,6 @@ export function AndesHome({ products }: AndesHomeProps) {
     [products]
   );
 
-  const offerProducts = useMemo(
-    () =>
-      [...products]
-        .filter((product) => product.precioAnterior || product.destacado)
-        .sort((a, b) => getProductPriority(a) - getProductPriority(b))
-        .slice(0, 4),
-    [products]
-  );
-
   // Catálogo: solo filtra por categoría, sin texto de búsqueda
   const filteredProducts = useMemo(() => {
     const filter =
@@ -336,6 +491,23 @@ export function AndesHome({ products }: AndesHomeProps) {
       : filteredProducts.length
         ? filteredProducts
         : featuredProducts;
+
+  const winterSeasonProducts = useMemo(
+    () =>
+      [...products]
+        .filter(isWinterSeasonProduct)
+        .sort((a, b) => {
+          const priority = getWinterProductPriority(a) - getWinterProductPriority(b);
+
+          if (priority !== 0) {
+            return priority;
+          }
+
+          return a.nombre.localeCompare(b.nombre, "es");
+        })
+        .slice(0, 18),
+    [products]
+  );
 
   const requestMessage =
     "Hola Farmacia Andes, no encontré el producto que busco. Quiero enviar nombre, foto o receta para consultar disponibilidad.";
@@ -631,131 +803,102 @@ export function AndesHome({ products }: AndesHomeProps) {
 
             <span>Tu salud es nuestra prioridad</span>
           </div>
-        </section>  
-
-        <section className="andes-split-section" id="cuidado-personal">
-          <div>
-            <span>Cuidado personal</span>
-
-            <h2>Higiene, belleza y protección para el día a día</h2>
-
-            <p>
-              Reunimos dermocosmética, cuidado familiar, protección solar e
-              higiene para que encuentres soluciones prácticas cerca de casa.
-            </p>
-
-            <a
-              href="#catalogo"
-              onClick={() => setActiveFilter("cuidado-personal")}
-            >
-              Ver cuidado personal
-            </a>
-          </div>
-
-          <Image
-            src="/sections/banner-invierno-andes-real-products.png"
-            alt="Productos de cuidado personal disponibles en Farmacia Andes"
-            width={720}
-            height={332}
-          />
         </section>
 
-        <section className="andes-wellness" id="salud-bienestar">
-          <div className="andes-section-head">
-            <span>Salud y bienestar</span>
-            <h2>Acompañamiento cercano para cada necesidad</h2>
-          </div>
+        <WinterSeasonCarousel products={winterSeasonProducts} />
 
-          <div className="andes-service-grid">
-            {[
-              [
-                "Orientación farmacéutica",
-                "Te ayudamos a revisar alternativas, formatos y disponibilidad."
-              ],
-              [
-                "Vitaminas y suplementos",
-                "Opciones para energía, nutrición, defensas y bienestar diario."
-              ],
-              [
-                "Recetas y continuidad",
-                "Consulta disponibilidad y requisitos antes de visitar la farmacia."
-              ],
-              [
-                "Atención local",
-                "Estamos en San Fernando con comunicación directa por WhatsApp."
-              ]
-            ].map(([title, text]) => (
-              <article key={title}>
-                <strong>{title}</strong>
-                <p>{text}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section className="andes-offers" id="ofertas">
-          <div className="andes-section-head">
-            <span>Ofertas</span>
-            <h2>Destacados y oportunidades</h2>
-            <p>Una selección de productos para consultar de forma rápida.</p>
-          </div>
-
-          <div className="andes-offer-grid">
-            {offerProducts.map((product) => (
-              <ProductTile key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
         <section className="andes-location-vademecum" id="ubicacion">
           <div className="andes-location-card">
-            <div className="andes-location-copy">
-              <span>Donde estamos</span>
-              <h2>
-                Estamos en el centro de <strong>{farmacia.ciudad}</strong>
-              </h2>
-              <p>Facil acceso y atencion cercana para tus consultas de salud.</p>
+            <div className="andes-location-left">
+              <div className="andes-location-copy">
+                <span className="andes-info-label">Donde estamos</span>
 
-              <div className="andes-location-details">
-                <a href={farmacia.mapaUrl} target="_blank" rel="noopener noreferrer">
-                  <i aria-hidden="true" />
-                  {farmacia.direccion}
+                <h2>
+                  Estamos frente a la plaza de <strong>{farmacia.ciudad}</strong>
+                </h2>
+                <p>Facil acceso y atencion cercana para tus consultas de salud.</p>
+
+              </div>
+
+              <div className="andes-location-contact-grid" aria-label="Datos de contacto">
+                <a
+                  className="andes-location-contact-card"
+                  href={farmacia.mapaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="andes-location-contact-icon andes-location-contact-icon--pin" aria-hidden="true" />
+                  <span>
+                    <strong>Direccion</strong>
+                    {farmacia.direccion}
+                  </span>
                 </a>
-                <span>
-                  <i aria-hidden="true" />
-                  Lunes a Viernes: {farmacia.horarioSemana}
-                  <br />
-                  Sabados: {farmacia.horarioSabado}
-                </span>
+
+                <a className="andes-location-contact-card" href={`mailto:${farmacia.email}`}>
+                  <span className="andes-location-contact-icon andes-location-contact-icon--mail" aria-hidden="true" />
+                  <span>
+                    <strong>Correo</strong>
+                    {farmacia.email}
+                  </span>
+                </a>
+
+                <div className="andes-location-contact-card">
+                  <span className="andes-location-contact-icon andes-location-contact-icon--clock" aria-hidden="true" />
+                  <span>
+                    <strong>Horario</strong>
+                    Lunes a viernes
+                    <br />
+                    {farmacia.horarioSemana.replace(" hrs", "")}
+                    <br />
+                    Sabados {farmacia.horarioSabado.replace(" hrs", "")}
+                  </span>
+                </div>
+
+                <a
+                  className="andes-location-contact-card"
+                  href={buildWhatsappMessage("Hola, quiero consultar por Farmacia Andes.")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <span className="andes-location-contact-icon andes-location-contact-icon--whatsapp" aria-hidden="true" />
+                  <span>
+                    <strong>WhatsApp</strong>
+                    {farmacia.telefono}
+                  </span>
+                </a>
               </div>
             </div>
 
-            <a
-              className="andes-mini-map"
-              href={farmacia.mapaUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Ver ubicacion de ${farmacia.nombre} en Google Maps`}
-            >
-              <span className="andes-map-park">
-                Plaza de
-                <br />
-                San Fernando
-              </span>
-              <span className="andes-map-place andes-map-place--cathedral">
-                Catedral
-                <br />
-                San Fernando
-              </span>
-              <span className="andes-map-place andes-map-place--mall">
-                Mall
-                <br />
-                Vivo
-              </span>
-              <span className="andes-map-pin">
-                <b>{farmacia.nombre}</b>
-                <small>{farmacia.direccion}</small>
-              </span>
-            </a>
+            <div className="andes-map-card">
+              <div className="andes-map-frame">
+                <iframe
+                  title={`Mapa de ubicacion de ${farmacia.nombre}`}
+                  src={farmacia.mapaEmbed}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+
+                <a
+                  className="andes-map-open"
+                  href={farmacia.mapaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Abrir en Maps
+                </a>
+              </div>
+
+              <div className="andes-map-summary">
+                <span aria-hidden="true">+</span>
+                <div>
+                  <strong>Ubicacion practica y centrica</strong>
+                  <p>
+                    Estamos frente a la plaza, en un sector de facil acceso para
+                    nuestros clientes.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
         </section>

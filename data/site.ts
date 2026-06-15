@@ -12,7 +12,7 @@ export const farmacia = {
   whatsappUrl:
     "https://wa.me/56961101655?text=Hola,%20quiero%20consultar%20por%20un%20producto%20en%20Farmacia%20Andes",
 
-  email: "contacto@farmaciaandes.cl",
+  email: "ventas.farmaciaandes@gmail.com",
 
   instagram: "@farmacia_andes_",
   instagramUrl: "https://www.instagram.com/farmacia_andes_/",
@@ -22,7 +22,7 @@ export const farmacia = {
 
   horarioPrincipal: "Lun a vie 09:00 - 20:00 hrs",
   horarioSemana: "09:00 - 20:00 hrs",
-  horarioSabado: "10:00 - 15:00 hrs",
+  horarioSabado: "09:00 - 14:00 hrs",
   horarioDomingo: "Consultar turno",
 
   directorTecnico: "",
@@ -81,7 +81,7 @@ export const horarios = [
   },
   {
     dia: "Sábados",
-    hora: "10:00 - 15:00 hrs"
+    hora: "09:00 - 14:00 hrs"
   },
   {
     dia: "Domingos y feriados",
