@@ -4287,6 +4287,7 @@ h1 {
   position: relative;
   overflow: hidden;
   margin-bottom: 30px;
+  background: #eef6ff;
 }
 
 .andes-winter-banner-shell::after {
@@ -4301,6 +4302,7 @@ h1 {
   display: block;
   width: 100%;
   height: auto;
+  object-fit: cover;
 }
 
 .andes-winter-head {
@@ -5423,7 +5425,13 @@ h1 {
     grid-column: 1 / -1;
     justify-content: flex-start;
     overflow-x: auto;
+    overflow-y: visible;
     padding-top: 4px;
+    scrollbar-width: none;
+  }
+
+  .andes-nav::-webkit-scrollbar {
+    display: none;
   }
 
   .andes-category-strip,
@@ -5463,6 +5471,15 @@ h1 {
     grid-template-columns: 130px minmax(0, 1fr);
   }
 
+  .andes-winter-banner-shell {
+    aspect-ratio: 2.35 / 1;
+  }
+
+  .andes-winter-banner {
+    height: 100%;
+    object-position: 24% center;
+  }
+
   .andes-request-actions {
     grid-column: 1 / -1;
     justify-items: start;
@@ -5486,6 +5503,7 @@ h1 {
   .andes-header {
     width: 100%;
     margin-top: 0;
+    padding: 8px 16px 10px;
     border-right: 0;
     border-left: 0;
     border-radius: 0;
@@ -5511,8 +5529,12 @@ h1 {
   }
 
   .andes-nav {
-    gap: 18px;
-    font-size: 13px;
+    gap: 16px;
+    width: 100%;
+    max-width: 100vw;
+    padding-bottom: 2px;
+    font-size: 12px;
+    white-space: nowrap;
   }
 
   .andes-hero {
@@ -5535,15 +5557,16 @@ h1 {
   }
 
   .andes-hero-content {
-    padding: 44px 0 82px;
+    padding: 42px 0 74px;
   }
 
   .andes-hero h1 {
-    font-size: 38px;
+    font-size: clamp(32px, 10vw, 38px);
+    line-height: 1.04;
   }
 
   .andes-hero p {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .andes-search {
@@ -5561,13 +5584,28 @@ h1 {
   }
 
   .andes-category-strip {
-    margin-top: -38px;
+    margin-top: -34px;
     grid-template-columns: 1fr;
+    border-radius: 14px;
   }
 
   .andes-category-strip button {
+    min-height: 82px;
+    grid-template-columns: 46px minmax(0, 1fr);
+    column-gap: 14px;
+    padding: 14px 18px;
     border-right: 0;
     border-bottom: 1px solid rgba(0, 59, 145, 0.08);
+  }
+
+  .andes-category-strip button > span {
+    width: 42px;
+    height: 42px;
+  }
+
+  .andes-category-strip svg {
+    width: 26px;
+    height: 26px;
   }
 
   .andes-site .andes-featured-brands {
@@ -5594,6 +5632,20 @@ h1 {
     padding-top: var(--andes-section-gap-tight);
   }
 
+  .andes-winter-banner-shell {
+    aspect-ratio: 1.35 / 1;
+    margin-bottom: 24px;
+  }
+
+  .andes-winter-banner-shell::after {
+    box-shadow: inset 0 0 24px 16px #ffffff;
+  }
+
+  .andes-winter-banner {
+    height: 100%;
+    object-position: 18% center;
+  }
+
   .andes-winter-head {
     align-items: start;
     flex-direction: column;
@@ -5612,7 +5664,7 @@ h1 {
   }
 
   .andes-winter-track {
-    grid-auto-columns: minmax(178px, 72vw);
+    grid-auto-columns: minmax(174px, 76vw);
     gap: 12px;
     padding-bottom: 14px;
   }
@@ -5646,7 +5698,11 @@ h1 {
   }
 
   .andes-location-card {
-    gap: 20px;
+    gap: 26px;
+  }
+
+  .andes-location-left {
+    gap: 18px;
   }
 
   .andes-location-contact-grid {
@@ -5689,8 +5745,8 @@ h1 {
 
   .andes-map-frame,
   .andes-map-frame iframe {
-    height: 248px;
-    min-height: 248px;
+    height: 238px;
+    min-height: 238px;
   }
 
   .andes-map-summary {
@@ -5762,7 +5818,8 @@ h1 {
   }
 
   .andes-info-container {
-    padding: 22px;
+    padding: 20px;
+    border-radius: 14px;
   }
 
   .andes-info-grid {
@@ -6370,4 +6427,58 @@ h1 {
 .andes-nav-dropdown-menu a:hover {
   color: #f58200;
   background: #f5f8fc;
+}
+
+@media (max-width: 1080px) {
+  .andes-nav {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .andes-nav-dropdown::after,
+  .andes-nav-dropdown-menu {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .andes-site {
+    --andes-section-gap: 64px;
+    --andes-section-gap-tight: 48px;
+  }
+
+  .andes-brand {
+    width: 138px;
+  }
+
+  .andes-header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .andes-nav {
+    gap: 14px;
+    font-size: 11px;
+  }
+
+  .andes-request-banner,
+  .andes-info-container {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .andes-winter-track {
+    grid-auto-columns: minmax(168px, 82vw);
+  }
+
+  .andes-location-contact-card {
+    grid-template-columns: 42px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .andes-location-contact-icon {
+    width: 42px;
+    height: 42px;
+  }
 }

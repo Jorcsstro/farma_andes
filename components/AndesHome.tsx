@@ -760,6 +760,8 @@ export function AndesHome({ products }: AndesHomeProps) {
           )}
         </section>
 
+        <WinterSeasonCarousel products={winterSeasonProducts} />
+
         <section className="andes-request-banner" id="encargo">
           <div className="andes-request-visual" aria-hidden="true">
             <Image
@@ -804,8 +806,6 @@ export function AndesHome({ products }: AndesHomeProps) {
             <span>Tu salud es nuestra prioridad</span>
           </div>
         </section>
-
-        <WinterSeasonCarousel products={winterSeasonProducts} />
 
         <section className="andes-location-vademecum" id="ubicacion">
           <div className="andes-location-card">
