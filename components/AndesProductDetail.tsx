@@ -71,7 +71,12 @@ export function AndesProductDetail({ product }: AndesProductDetailProps) {
     <>
       <section className={styles.productDetailHero}>
         <div className={styles.productDetailImage}>
-          <Image src={product.imagen} alt={product.nombre} width={520} height={390} priority />
+          {(() => {
+            const isExternalImage = product.imagen.startsWith("http");
+            return (
+              <Image src={product.imagen} alt={product.nombre} width={520} height={390} priority unoptimized={isExternalImage} />
+            );
+          })()}
         </div>
 
         <div className={styles.productSummary}>
@@ -155,7 +160,7 @@ export function AndesProductDetail({ product }: AndesProductDetailProps) {
             {relatedProducts.map((relatedProduct) => (
               <article className={styles.relatedCompactCard} key={relatedProduct.id}>
                 <Link className={styles.relatedCompactImage} href={`/productos/${relatedProduct.slug}`}>
-                  <Image src={relatedProduct.imagen} alt={relatedProduct.nombre} width={120} height={110} />
+                  <Image src={relatedProduct.imagen} alt={relatedProduct.nombre} width={120} height={110} unoptimized={relatedProduct.imagen.startsWith("http")} />
                 </Link>
                 <div>
                   <h3>{relatedProduct.nombre}</h3>

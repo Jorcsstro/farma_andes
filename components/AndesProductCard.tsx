@@ -11,10 +11,11 @@ type AndesProductCardProps = {
 };
 
 export function AndesProductCard({ product }: AndesProductCardProps) {
+  const isExternalImage = product.imagen.startsWith("http");
   return (
     <article className={styles.card}>
       <Link className={styles.media} href={`/productos/${product.slug}`}>
-        <Image src={product.imagen} alt={product.nombre} width={260} height={190} />
+        <Image src={product.imagen} alt={product.nombre} width={260} height={190} unoptimized={isExternalImage} />
       </Link>
 
       <div className={styles.cardBody}>

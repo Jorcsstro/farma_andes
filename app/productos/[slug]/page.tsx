@@ -3,20 +3,21 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { AndesProductDetail } from "@/components/AndesProductDetail";
-import { getProductoBySlug, productos } from "@/data/productos";
+import { getCatalogProducts, getCatalogProductBySlug } from "@/lib/catalog-products";
 import styles from "@/components/AndesInternal.module.css";
 
 type ProductPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return productos.map((product) => ({ slug: product.slug }));
+export async function generateStaticParams() {
+  const products = await getCatalogProducts();
+  return products.map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductoBySlug(slug);
+  const product = await getCatalogProductBySlug(slug);
 
   if (!product) {
     return {
@@ -32,7 +33,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { slug } = await params;
-  const product = getProductoBySlug(slug);
+  const product = await getCatalogProductBySlug(slug);
 
   if (!product) notFound();
 

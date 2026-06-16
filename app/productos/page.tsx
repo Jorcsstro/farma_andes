@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import { AndesCatalog } from "@/components/AndesCatalog";
-import { categoriasProductos, productos } from "@/data/productos";
+import { getCatalogProducts, getCatalogCategories } from "@/lib/catalog-products";
 import styles from "@/components/AndesInternal.module.css";
 
 export const metadata: Metadata = {
@@ -26,7 +26,8 @@ export default async function ProductosPage({
     : params.categoria;
 
   const categoriaSeleccionada = categoriaParam ?? "todos";
-
+  const products = await getCatalogProducts();
+  const categories = getCatalogCategories(products);
   return (
     <main className={styles.page}>
       <div className={styles.shell}>
@@ -40,8 +41,8 @@ export default async function ProductosPage({
         </section>
 
         <AndesCatalog
-          products={productos}
-          categories={categoriasProductos}
+          products={products}
+          categories={categories}
           initialCategory={categoriaSeleccionada}
         />
       </div>

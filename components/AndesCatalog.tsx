@@ -102,6 +102,8 @@ export function AndesCatalog({
           product.principioActivo,
           product.formato,
           product.condicionVenta,
+          product.laboratorio,
+          product.descripcion
         ].join(" ")
       );
 
@@ -131,22 +133,7 @@ export function AndesCatalog({
       return products.indexOf(a) - products.indexOf(b);
     });
   }, [category, products, query, selectedConditions, sortBy]);
-
-  const suggestions = useMemo(() => {
-    const normalizedQuery = normalize(query);
-
-    if (normalizedQuery.length < 2) return [];
-
-    return products
-      .filter((product) =>
-        normalize(
-          [product.nombre, product.categoria, product.principioActivo].join(
-            " "
-          )
-        ).includes(normalizedQuery)
-      )
-      .slice(0, 5);
-  }, [products, query]);
+  
 
   const totalPages = Math.max(
     1,
@@ -154,6 +141,16 @@ export function AndesCatalog({
   );
 
   const currentPage = Math.min(page, totalPages);
+
+  useEffect(() => {
+    // Reset to first page when search, category, conditions or sort change
+    setPage(1);
+  }, [query, category, selectedConditions, sortBy]);
+
+  useEffect(() => {
+    // Ensure current page is within bounds when totalPages changes
+    setPage((p) => Math.min(p, totalPages));
+  }, [totalPages]);
 
   const visibleProducts = filteredProducts.slice(
     (currentPage - 1) * PAGE_SIZE,
@@ -219,23 +216,7 @@ export function AndesCatalog({
             <button type="button" aria-label="Buscar productos">
               Buscar
             </button>
-
-            {suggestions.length ? (
-              <div className={styles.fiboPanel}>
-                {suggestions.map((product) => (
-                  <button
-                    key={product.id}
-                    type="button"
-                    onClick={() => updateQuery(product.nombre)}
-                  >
-                    <strong>{product.nombre}</strong>
-                    <span>
-                      {product.categoria} - {product.principioActivo}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            ) : null}
+            
           </div>
 
           <select
