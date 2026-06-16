@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { formatCLP } from "@/lib/format";
 import { getProductImageUrl } from "@/lib/product-image-overrides";
@@ -28,6 +29,19 @@ function normalizeText(value: string) {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
+}
+
+function slugifyText(value: string) {
+  return normalizeText(value)
+    .replace(/\s+/g, "-")
+    .replace(/[^a-z0-9-]/g, "")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+function getProductSlug(product: Product) {
+  const maybeSlug = (product as Product & { slug?: string }).slug;
+  return maybeSlug ? maybeSlug : slugifyText(product.nombre);
 }
 
 function searchableText(product: Product) {
@@ -177,9 +191,11 @@ function ShowcaseProductCard({ product }: { product: Product }) {
   const saleTypeLabel = product.requiereReceta ? "Requiere receta" : "Venta libre";
   const saleTypeClass = product.requiereReceta ? "showcase-pill-prescription" : "showcase-pill-free";
 
+  const slug = getProductSlug(product);
+
   return (
     <article className="showcase-product-card">
-      <div className="showcase-product-media">
+      <Link href={`/productos/${slug}`} className="showcase-product-media">
         <span className={`showcase-product-pill ${saleTypeClass}`}>{saleTypeLabel}</span>
         <Image
           src={imageUrl}
@@ -189,12 +205,14 @@ function ShowcaseProductCard({ product }: { product: Product }) {
           aria-hidden="true"
           unoptimized={isExternalImage}
         />
-      </div>
+      </Link>
 
       <div className="showcase-product-copy">
-        <span>{product.marca}</span>
-        <h3>{product.nombre}</h3>
-        <p>{product.formato}</p>
+        <Link href={`/productos/${slug}`}>
+          <span>{product.marca}</span>
+          <h3>{product.nombre}</h3>
+          <p>{product.formato}</p>
+        </Link>
       </div>
 
       <div className="showcase-product-bottom">
@@ -400,14 +418,20 @@ function ProductShowcase({ config }: { config: ShowcaseConfig }) {
             href="#catalogo"
             aria-label="Ver productos para resfrio, tos y defensas en Farmacia Andes"
           >
-            <Image
-              src="/sections/banner-invierno-andes-real-products.png"
-              alt="Disfruta el invierno con cuidado Andes. Productos para resfrio, tos y defensas."
-              width={1847}
-              height={852}
-              sizes="(max-width: 768px) calc(100vw - 32px), min(1180px, calc(100vw - 48px))"
-              priority={false}
-            />
+            <picture>
+              <source
+                media="(max-width: 768px)"
+                srcSet="/sections/banner-invierno-andes.png"
+              />
+              <Image
+                src="/sections/banner-invierno-andes-real-products.png"
+                alt="Disfruta el invierno con cuidado Andes. Productos para resfrio, tos y defensas."
+                width={1847}
+                height={852}
+                sizes="(max-width: 768px) calc(100vw - 32px), min(1180px, calc(100vw - 48px))"
+                priority={false}
+              />
+            </picture>
           </a>
 
           <WinterCareCarousel products={config.winterProducts ?? []} />

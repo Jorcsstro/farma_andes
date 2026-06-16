@@ -332,12 +332,23 @@ function WinterSeasonCarousel({ products }: { products: Product[] }) {
     <section className="andes-winter-season" aria-label="Productos para temporada de invierno">
       <div className="andes-winter-banner-shell">
         <Image
-          className="andes-winter-banner"
+          className="andes-winter-banner andes-winter-banner-desktop"
           src="/sections/invierno.png"
           alt="Temporada de invierno Farmacia Andes: resfrio y fiebre, tos y garganta, defensas, cuidado e higiene."
           width={2048}
           height={682}
           sizes="(max-width: 768px) calc(100vw - 32px), min(1180px, calc(100vw - 32px))"
+          priority={false}
+        />
+
+        <Image
+          className="andes-winter-banner andes-winter-banner-mobile"
+          src="/sections/invierno-banner-movil.png"
+          alt="Temporada de invierno Farmacia Andes (móvil): resfrio y fiebre, tos y garganta, defensas, cuidado e higiene."
+          width={800}
+          height={900}
+          sizes="(max-width: 768px) calc(100vw - 32px)"
+          priority={false}
         />
       </div>
       <div className="andes-winter-head">
