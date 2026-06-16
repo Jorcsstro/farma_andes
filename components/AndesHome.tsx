@@ -4,11 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { useRouter } from "next/navigation";
 
 import { farmacia } from "@/data/site";
 import { formatCLP } from "@/lib/format";
 import { getProductImageUrl } from "@/lib/product-image-overrides";
 import { buildProductWhatsappUrl } from "@/lib/whatsapp";
+import { getProductSlug } from "@/lib/product-slug";
 import type { Product } from "@/types/product";
 import { Footer } from "@/components/Footer";
 
@@ -414,6 +416,7 @@ export function AndesHome({ products }: AndesHomeProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const searchWrapRef = useRef<HTMLDivElement>(null);
+  const searchDropdownRef = useRef<HTMLDivElement>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
 
@@ -425,6 +428,8 @@ export function AndesHome({ products }: AndesHomeProps) {
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const router = useRouter();
 
   // Calcular posición fija del dropdown desde el bounding rect del input y actualizar con scroll/resize
   useEffect(() => {
@@ -457,7 +462,12 @@ export function AndesHome({ products }: AndesHomeProps) {
   // Cerrar dropdown al hacer clic fuera
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (searchWrapRef.current && !searchWrapRef.current.contains(event.target as Node)) {
+      const target = event.target as Node;
+
+      const clickedInsideSearch = searchWrapRef.current?.contains(target) ?? false;
+      const clickedInsideDropdown = searchDropdownRef.current?.contains(target) ?? false;
+
+      if (!clickedInsideSearch && !clickedInsideDropdown) {
         setIsSearchOpen(false);
       }
     }
@@ -599,6 +609,7 @@ export function AndesHome({ products }: AndesHomeProps) {
               {isMounted && isSearchOpen && searchQuery.length >= 2 &&
                 createPortal(
                   <div
+                    ref={searchDropdownRef}
                     className="andes-search-dropdown"
                     style={dropdownStyle}
                     role="listbox"
@@ -606,39 +617,43 @@ export function AndesHome({ products }: AndesHomeProps) {
                   >
                     {searchResults.length > 0 ? (
                       <>
-                        {searchResults.map((product) => {
+                                    {searchResults.map((product) => {
                           const imgUrl = getProductImageUrl(product);
                           const isExternal = imgUrl.startsWith("http");
                           const hasPrice = product.precio > 0;
+                                      const slug = getProductSlug(product);
 
-                          return (
-                            <a
-                              key={product.id}
-                              className="andes-search-result"
-                              href={buildProductWhatsappUrl(product)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              onClick={() => setIsSearchOpen(false)}
-                            >
-                              <span className="andes-search-result-img">
-                                <Image
-                                  src={imgUrl}
-                                  alt=""
-                                  width={52}
-                                  height={52}
-                                  aria-hidden={true}
-                                  unoptimized={isExternal}
-                                />
-                              </span>
-                              <span className="andes-search-result-info">
-                                <strong>{product.nombre}</strong>
-                                <small>{product.marca}</small>
-                              </span>
-                              <span className="andes-search-result-price">
-                                {hasPrice ? formatCLP(product.precio) : "Consultar"}
-                              </span>
-                            </a>
-                          );
+                                      return (
+                                        <a
+                                          key={product.id}
+                                          className="andes-search-result"
+                                          href={`/productos/${slug}`}
+                                          onMouseDown={(e) => e.preventDefault()}
+                                          onClick={(e) => {
+                                            e.preventDefault();
+                                            setIsSearchOpen(false);
+                                            router.push(`/productos/${slug}`);
+                                          }}
+                                        >
+                                          <span className="andes-search-result-img">
+                                            <Image
+                                              src={imgUrl}
+                                              alt=""
+                                              width={52}
+                                              height={52}
+                                              aria-hidden={true}
+                                              unoptimized={isExternal}
+                                            />
+                                          </span>
+                                          <span className="andes-search-result-info">
+                                            <strong>{product.nombre}</strong>
+                                            <small>{product.marca}</small>
+                                          </span>
+                                          <span className="andes-search-result-price">
+                                            {hasPrice ? formatCLP(product.precio) : "Consultar"}
+                                          </span>
+                                        </a>
+                                      );
                         })}
                         <div className="andes-search-footer">
                           <a

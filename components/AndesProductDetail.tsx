@@ -83,6 +83,9 @@ export function AndesProductDetail({ product }: AndesProductDetailProps) {
           <div className={styles.productTitleRow}>
             <h1>{product.nombre}</h1>
             <span className={styles.saleBadge}>{product.condicionVenta}</span>
+            {product.bioequivalente ? (
+              <span className={styles.bioequivalentBadge}>Bioequivalente</span>
+            ) : null}
           </div>
 
           <dl className={styles.productSpecs}>

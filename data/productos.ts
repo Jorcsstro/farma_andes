@@ -14,6 +14,7 @@ export type AndesProduct = {
   indicaciones: string;
   advertencias: string;
   conservacion: string;
+  bioequivalente?: boolean;
   relacionados: string[];
 };
 

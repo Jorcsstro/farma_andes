@@ -10,4 +10,5 @@ export type Product = {
   destacado: boolean;
   imagenUrl: string;
   formato: string;
+  bioequivalente?: boolean;
 };

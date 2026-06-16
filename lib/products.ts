@@ -1,6 +1,7 @@
 import { products as fallbackProducts } from "@/data/products";
 import { unstable_cache } from "next/cache";
 import { getSafeImageUrl } from "@/lib/safe-image";
+import { isBioequivalentProduct } from "@/lib/product-flags";
 import type { Product } from "@/types/product";
 
 type ProductRow = Record<string, unknown>;
@@ -67,6 +68,11 @@ function mapProduct(row: ProductRow): Product | null {
   }
 
   const categoria = asString(row, ["categoria", "category"], "Medicamentos");
+  const rawBio = getValue(row, ["bioequivalente", "bio_equivalente", "bio_equivalent"]);
+  const bioequivalente =
+    rawBio !== undefined && rawBio !== null
+      ? asBoolean(row, ["bioequivalente", "bio_equivalente", "bio_equivalent"])
+      : isBioequivalentProduct(nombre);
 
   return {
     id,
@@ -84,6 +90,8 @@ function mapProduct(row: ProductRow): Product | null {
     destacado: asBoolean(row, ["destacado", "featured"]),
     imagenUrl: getSafeImageUrl(asString(row, ["imagenUrl", "imagen_url", "image_url"], "/products/receta.svg")),
     formato: asString(row, ["formato", "format"], "Formato a consultar")
+    ,
+    bioequivalente
   };
 }
 

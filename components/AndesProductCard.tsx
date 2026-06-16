@@ -20,6 +20,9 @@ export function AndesProductCard({ product }: AndesProductCardProps) {
 
       <div className={styles.cardBody}>
         <span className={styles.category}>{product.categoria}</span>
+        {product.bioequivalente ? (
+          <span className={styles.bioequivalentBadge}>Bioequivalente</span>
+        ) : null}
         <h2>{product.nombre}</h2>
         <div className={styles.meta}>
           <span>{product.condicionVenta}</span>

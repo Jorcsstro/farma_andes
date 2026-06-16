@@ -430,9 +430,13 @@
 
 .pagination {
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 0.45rem;
   padding-top: 34px;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .pageButton,
@@ -449,6 +453,15 @@
   border-radius: 8px;
 }
 
+.paginationEllipsis {
+  min-width: 1.6rem;
+  text-align: center;
+  color: #64748b;
+  font-weight: 700;
+  display: inline-grid;
+  place-items: center;
+}
+
 .pageButtonActive {
   color: #ffffff;
   background: #003b91;
@@ -457,6 +470,23 @@
 .pageButton:disabled {
   cursor: not-allowed;
   opacity: 0.45;
+}
+
+@media (max-width: 640px) {
+  .pagination {
+    gap: 0.35rem;
+  }
+
+  .pageButton,
+  .pageButtonActive {
+    min-width: 2rem;
+    height: 2rem;
+    font-size: 0.85rem;
+  }
+
+  .pageButton {
+    padding-inline: 0.65rem;
+  }
 }
 
 .detail {
@@ -525,6 +555,20 @@
   font-weight: 950;
   background: #ddf7e8;
   border-radius: 999px;
+}
+
+.bioequivalentBadge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: 999px;
+  padding: 4px 8px;
+  background: rgba(245, 158, 11, 0.12);
+  color: #92400e;
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .productSpecs {

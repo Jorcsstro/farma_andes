@@ -51,6 +51,7 @@ export function AndesCatalog({
   const [selectedConditions, setSelectedConditions] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState("destacados");
   const [page, setPage] = useState(1);
+  const [bioFilter, setBioFilter] = useState<"todos" | "bio">("todos");
 
   useEffect(() => {
     setCategory(getCategoryFromSlug(categories, initialCategory));
@@ -95,6 +96,9 @@ export function AndesCatalog({
         !selectedConditions.length ||
         selectedConditions.includes(product.condicionVenta);
 
+      const matchesBioequivalent =
+        bioFilter === "todos" || product.bioequivalente === true;
+
       const searchable = normalize(
         [
           product.nombre,
@@ -103,13 +107,15 @@ export function AndesCatalog({
           product.formato,
           product.condicionVenta,
           product.laboratorio,
-          product.descripcion
+          product.descripcion,
+          product.bioequivalente ? "bioequivalente" : ""
         ].join(" ")
       );
 
       return (
         matchesCategory &&
         matchesCondition &&
+        matchesBioequivalent &&
         (!normalizedQuery || searchable.includes(normalizedQuery))
       );
     });
@@ -132,7 +138,7 @@ export function AndesCatalog({
 
       return products.indexOf(a) - products.indexOf(b);
     });
-  }, [category, products, query, selectedConditions, sortBy]);
+  }, [category, products, query, selectedConditions, sortBy, bioFilter]);
   
 
   const totalPages = Math.max(
@@ -142,10 +148,40 @@ export function AndesCatalog({
 
   const currentPage = Math.min(page, totalPages);
 
+  function getPaginationItems(current: number, total: number) {
+    const delta = 2;
+    const range: Array<number | string> = [];
+
+    if (total <= 1) return [1];
+
+    const left = Math.max(2, current - delta);
+    const right = Math.min(total - 1, current + delta);
+
+    range.push(1);
+
+    if (left > 2) {
+      range.push("...");
+    }
+
+    for (let i = left; i <= right; i++) {
+      range.push(i);
+    }
+
+    if (right < total - 1) {
+      range.push("...");
+    }
+
+    if (total > 1) {
+      range.push(total);
+    }
+
+    return range;
+  }
+
   useEffect(() => {
-    // Reset to first page when search, category, conditions or sort change
+    // Reset to first page when search, category, conditions, sort or bio filter change
     setPage(1);
-  }, [query, category, selectedConditions, sortBy]);
+  }, [query, category, selectedConditions, sortBy, bioFilter]);
 
   useEffect(() => {
     // Ensure current page is within bounds when totalPages changes
@@ -174,6 +210,31 @@ export function AndesCatalog({
                 onClick={() => updateCategory(item)}
               >
                 {item}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        <div className={styles.sidebarGroup}>
+          <h2>Bioequivalentes</h2>
+
+          <div className={styles.sidebarList}>
+            {[
+              { key: "todos", label: "Todos" },
+              { key: "bio", label: "Bioequivalentes" }
+            ].map((item) => (
+              <button
+                className={`${styles.sidebarButton} ${
+                  bioFilter === (item.key as "todos" | "bio") ? styles.sidebarButtonActive : ""
+                }`}
+                key={item.key}
+                type="button"
+                onClick={() => {
+                  setBioFilter(item.key as "todos" | "bio");
+                  setPage(1);
+                }}
+              >
+                {item.label}
               </button>
             ))}
           </div>
@@ -244,35 +305,49 @@ export function AndesCatalog({
             </div>
 
             {totalPages > 1 ? (
-              <nav
-                className={styles.pagination}
-                aria-label="Paginación de productos"
-              >
-                {Array.from(
-                  { length: totalPages },
-                  (_, index) => index + 1
-                ).map((item) => (
-                  <button
-                    key={item}
-                    type="button"
-                    className={
-                      currentPage === item
-                        ? styles.pageButtonActive
-                        : styles.pageButton
-                    }
-                    onClick={() => setPage(item)}
-                  >
-                    {item}
-                  </button>
-                ))}
+              <nav className={styles.pagination} aria-label="Paginación de productos">
+                <button
+                  type="button"
+                  className={styles.pageButton}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  aria-label="Anterior"
+                >
+                  &lt;
+                </button>
+
+                {getPaginationItems(currentPage, totalPages).map((item, idx) => {
+                  if (item === "...") {
+                    return (
+                      <span key={`e-${idx}`} className={styles.paginationEllipsis} aria-hidden>
+                        ...
+                      </span>
+                    );
+                  }
+
+                  const pageNum = item as number;
+
+                  return (
+                    <button
+                      key={pageNum}
+                      type="button"
+                      className={
+                        currentPage === pageNum ? styles.pageButtonActive : styles.pageButton
+                      }
+                      onClick={() => setPage(pageNum)}
+                      aria-current={currentPage === pageNum ? "page" : undefined}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                })}
 
                 <button
                   type="button"
                   className={styles.pageButton}
                   disabled={currentPage === totalPages}
-                  onClick={() =>
-                    setPage((value) => Math.min(totalPages, value + 1))
-                  }
+                  onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
+                  aria-label="Siguiente"
                 >
                   &gt;
                 </button>
