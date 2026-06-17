@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: "Recomendaciones para usar medicamentos de forma segura, responsable e informada."
 };
 
-const usoRacionalPosterUrl = "https://www.redfarma.cl/img/carro-compra/USO-RACIONAL-DE-MEDICAMENTOS.jpg";
+const minsalUsoRacionalUrl = "https://www.minsal.cl/medicamentos_uso_racional/";
 
 const recommendations = [
   {
@@ -60,16 +60,23 @@ export default function UsoRacionalPage() {
           </div>
 
           <figure className={styles.posterFrame}>
-            <Image
-              src={usoRacionalPosterUrl}
-              alt="Infografia Uso racional de medicamentos con recomendaciones sobre embarazo, fecha de vencimiento, no recomendar medicamentos, almacenamiento y mantener fuera del alcance de ninos."
-              width={1342}
-              height={896}
-              className={styles.posterImage}
-              priority
-            />
+            <a
+              href={minsalUsoRacionalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Abrir pagina oficial del MINSAL sobre uso racional de medicamentos"
+            >
+              <Image
+                src="/images/usoracional.png"
+                alt="Infografia Uso racional de medicamentos con recomendaciones sobre embarazo, fecha de vencimiento, no recomendar medicamentos, almacenamiento y mantener fuera del alcance de ninos."
+                width={1342}
+                height={896}
+                className={styles.posterImage}
+                priority
+              />
+            </a>
             <figcaption>
-              Infografia educativa sobre uso racional de medicamentos. Ante dudas, consulta al profesional tratante o al quimico farmaceutico.
+              Infografia educativa sobre uso racional de medicamentos. Haz clic en la imagen para revisar la informacion oficial del MINSAL.
             </figcaption>
           </figure>
         </section>
