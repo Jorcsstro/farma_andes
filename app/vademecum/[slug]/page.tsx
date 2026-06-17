@@ -15,6 +15,8 @@ type VademecumPageProps = {
   params: Promise<{ slug: string }>;
 };
 
+export const revalidate = 300;
+
 function renderListBlock(title: string, items?: string[]) {
   if (!items?.length) return null;
 
@@ -41,17 +43,18 @@ function renderTextBlock(title: string, content?: string) {
   );
 }
 
-export function generateStaticParams() {
-  return getVademecumEntries().map((entry) => ({ slug: entry.slug }));
+export async function generateStaticParams() {
+  const entries = await getVademecumEntries();
+  return entries.map((entry) => ({ slug: entry.slug }));
 }
 
 export async function generateMetadata({ params }: VademecumPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const entry = getVademecumEntryBySlug(slug);
+  const entry = await getVademecumEntryBySlug(slug);
 
   if (!entry) {
     return {
-      title: "Principio activo no encontrado | Farmacia Andes"
+      title: "Medicamento no encontrado | Farmacia Andes"
     };
   }
 
@@ -63,7 +66,7 @@ export async function generateMetadata({ params }: VademecumPageProps): Promise<
 
 export default async function VademecumEntryPage({ params }: VademecumPageProps) {
   const { slug } = await params;
-  const entry = getVademecumEntryBySlug(slug);
+  const entry = await getVademecumEntryBySlug(slug);
 
   if (!entry) notFound();
 
@@ -86,10 +89,16 @@ export default async function VademecumEntryPage({ params }: VademecumPageProps)
           <p>{entry.descripcion}</p>
         </section>
 
-        <section className={styles.facts} aria-label="Resumen del principio activo">
+        <section className={styles.facts} aria-label="Resumen del medicamento">
+          {entry.tipo ? (
+            <div className={styles.fact}>
+              <span>Tipo de ficha</span>
+              <strong>{entry.tipo === "medicamento-catalogo" ? "Medicamento del catalogo" : "Principio activo"}</strong>
+            </div>
+          ) : null}
           {entry.principioActivo ? (
             <div className={styles.fact}>
-              <span>Principio activo</span>
+              <span>Principio activo / medicamento</span>
               <strong>{entry.principioActivo}</strong>
             </div>
           ) : null}
