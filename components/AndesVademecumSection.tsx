@@ -18,6 +18,26 @@ function normalize(value: string) {
     .toLowerCase();
 }
 
+function buildSearchableEntry(entry: VademecumEntry) {
+  return [
+    entry.nombre,
+    entry.principioActivo,
+    entry.categoria,
+    entry.categoriaTerapeutica,
+    entry.descripcion,
+    ...(entry.usosComunes ?? []),
+    ...(entry.advertencias ?? []),
+    ...(entry.consultaFarmaceutica ?? []),
+    ...(entry.contraindicacionesGenerales ?? []),
+    ...(entry.interaccionesGenerales ?? []),
+    entry.embarazoLactancia,
+    entry.adultoMayor,
+    entry.ninos
+  ]
+    .filter(Boolean)
+    .join(" ");
+}
+
 export function AndesVademecumSection({ entries }: AndesVademecumSectionProps) {
   const [query, setQuery] = useState("");
 
@@ -26,9 +46,7 @@ export function AndesVademecumSection({ entries }: AndesVademecumSectionProps) {
 
     if (!normalizedQuery) return entries;
 
-    return entries.filter((entry) =>
-      normalize([entry.nombre, entry.categoria, entry.usosComunes.join(" ")].join(" ")).includes(normalizedQuery)
-    );
+    return entries.filter((entry) => normalize(buildSearchableEntry(entry)).includes(normalizedQuery));
   }, [entries, query]);
 
   return (
@@ -36,7 +54,7 @@ export function AndesVademecumSection({ entries }: AndesVademecumSectionProps) {
       <div className={styles.toolbar}>
         <AndesSearch
           label="Buscar en vademecum"
-          placeholder="Buscar por principio activo, uso comun o categoria..."
+          placeholder="Buscar por principio activo, uso comun o categoria terapeutica..."
           value={query}
           onChange={setQuery}
         />
@@ -47,8 +65,9 @@ export function AndesVademecumSection({ entries }: AndesVademecumSectionProps) {
           {filteredEntries.map((entry) => (
             <article className={styles.card} key={entry.id}>
               <div className={styles.cardBody}>
-                <span className={styles.category}>{entry.categoria}</span>
+                <span className={styles.category}>{entry.categoriaTerapeutica ?? entry.categoria}</span>
                 <h2>{entry.nombre}</h2>
+                <p className={styles.meta}>{entry.descripcion}</p>
                 <p className={styles.meta}>{entry.usosComunes.slice(0, 3).join(", ")}</p>
                 <div className={styles.actions}>
                   <Link className={styles.buttonSecondary} href={`/vademecum/${entry.slug}`}>
