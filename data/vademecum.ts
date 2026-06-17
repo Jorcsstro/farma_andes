@@ -25,6 +25,8 @@ export type VademecumEntry = {
   ninos?: string;
   cuandoConsultar?: string[];
   fuenteRevision?: VademecumRevision;
+  tipo?: "principio-activo" | "medicamento-catalogo";
+  productoCatalogoId?: string;
 };
 
 const revisionBase: VademecumRevision = {
@@ -54,7 +56,8 @@ export const vademecum: VademecumEntry[] = [
     consultaFarmaceutica: ["Si la fiebre dura mas de 3 dias.", "Si hay dolor intenso o persistente.", "Si usas otros medicamentos para resfrio o gripe."],
     cuandoConsultar: ["Fiebre persistente", "Dolor intenso", "Sospecha de sobredosis", "Uso en ninos, embarazo, adulto mayor o enfermedad cronica"],
     productosRelacionados: ["paracetamol", "acetaminofen"],
-    fuenteRevision: revisionBase
+    fuenteRevision: revisionBase,
+    tipo: "principio-activo"
   },
   {
     id: "ibuprofeno",
@@ -76,7 +79,8 @@ export const vademecum: VademecumEntry[] = [
     consultaFarmaceutica: ["Si tienes gastritis o antecedentes de ulcera.", "Si tomas medicamentos para presion, anticoagulantes o corticoides.", "Si el dolor no mejora o aumenta."],
     cuandoConsultar: ["Dolor persistente", "Dolor con fiebre alta", "Antecedentes gastricos, renales o cardiovasculares"],
     productosRelacionados: ["ibuprofeno"],
-    fuenteRevision: revisionBase
+    fuenteRevision: revisionBase,
+    tipo: "principio-activo"
   },
   {
     id: "loratadina",
@@ -98,7 +102,8 @@ export const vademecum: VademecumEntry[] = [
     consultaFarmaceutica: ["Si los sintomas duran varios dias.", "Si se acompanan de fiebre o secrecion espesa.", "Si necesitas combinar con descongestionantes."],
     cuandoConsultar: ["Dificultad respiratoria", "Hinchazon de labios, lengua o rostro", "Sintomas persistentes"],
     productosRelacionados: ["loratadina"],
-    fuenteRevision: revisionBase
+    fuenteRevision: revisionBase,
+    tipo: "principio-activo"
   },
   {
     id: "omeprazol",
@@ -120,7 +125,8 @@ export const vademecum: VademecumEntry[] = [
     consultaFarmaceutica: ["Si lo usas todos los dias.", "Si necesitas combinarlo con antiinflamatorios.", "Si tienes sintomas nocturnos o recurrentes."],
     cuandoConsultar: ["Acidez recurrente", "Dolor abdominal intenso", "Vomitos persistentes", "Sangrado digestivo"],
     productosRelacionados: ["omeprazol"],
-    fuenteRevision: revisionBase
+    fuenteRevision: revisionBase,
+    tipo: "principio-activo"
   },
   {
     id: "diclofenaco",
@@ -142,7 +148,8 @@ export const vademecum: VademecumEntry[] = [
     consultaFarmaceutica: ["Si usas ibuprofeno, naproxeno u otro antiinflamatorio.", "Si el dolor se acompana de inflamacion intensa.", "Si necesitas escoger entre formato topico u oral."],
     cuandoConsultar: ["Dolor persistente", "Inflamacion intensa", "Antecedentes gastricos, renales o cardiovasculares"],
     productosRelacionados: ["diclofenaco"],
-    fuenteRevision: revisionBase
+    fuenteRevision: revisionBase,
+    tipo: "principio-activo"
   },
   {
     id: "amoxicilina",
@@ -164,6 +171,7 @@ export const vademecum: VademecumEntry[] = [
     consultaFarmaceutica: ["Si no tienes receta.", "Si tienes antecedente de alergia a antibioticos.", "Si aparecen ronchas, dificultad respiratoria o diarrea intensa."],
     cuandoConsultar: ["Sospecha de infeccion", "Alergia", "Efectos adversos", "Dudas sobre duracion del tratamiento"],
     productosRelacionados: ["amoxicilina"],
-    fuenteRevision: revisionBase
+    fuenteRevision: revisionBase,
+    tipo: "principio-activo"
   }
 ];
