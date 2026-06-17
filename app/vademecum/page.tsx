@@ -9,8 +9,10 @@ export const metadata: Metadata = {
   description: "Informacion consultiva sobre principios activos y uso seguro de medicamentos."
 };
 
-export default function VademecumPage() {
-  const entries = getVademecumEntries();
+export const revalidate = 300;
+
+export default async function VademecumPage() {
+  const entries = await getVademecumEntries();
 
   return (
     <main className={styles.page}>
