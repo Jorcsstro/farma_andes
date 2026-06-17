@@ -16,17 +16,24 @@ function getSupabaseImageHostname() {
 
 const supabaseImageHostname = getSupabaseImageHostname();
 
+const remoteImagePatterns: NonNullable<NextConfig["images"]>["remotePatterns"] = [
+  {
+    protocol: "https",
+    hostname: "www.redfarma.cl"
+  }
+];
+
+if (supabaseImageHostname) {
+  remoteImagePatterns.push({
+    protocol: "https",
+    hostname: supabaseImageHostname
+  });
+}
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
-    remotePatterns: supabaseImageHostname
-      ? [
-          {
-            protocol: "https",
-            hostname: supabaseImageHostname
-          }
-        ]
-      : []
+    remotePatterns: remoteImagePatterns
   },
   async headers() {
     return [

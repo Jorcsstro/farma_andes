@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 
 import { AndesWhatsappButton } from "@/components/AndesWhatsappButton";
 import styles from "@/components/AndesInternal.module.css";
@@ -8,30 +9,32 @@ export const metadata: Metadata = {
   description: "Recomendaciones para usar medicamentos de forma segura, responsable e informada."
 };
 
+const minsalUsoRacionalUrl = "https://www.minsal.cl/medicamentos_uso_racional/";
+
 const recommendations = [
   {
-    title: "No te automediques.",
-    text: "Evita iniciar tratamientos por cuenta propia, especialmente si tienes enfermedades cronicas o usas otros medicamentos."
+    title: "Consulta antes de automedicarte.",
+    text: "Evita iniciar tratamientos por cuenta propia, especialmente si tienes enfermedades cronicas, embarazo, lactancia o usas otros medicamentos."
+  },
+  {
+    title: "Revisa la fecha de vencimiento.",
+    text: "No uses medicamentos vencidos, alterados, abiertos indebidamente o sin identificacion clara."
+  },
+  {
+    title: "No recomiendes medicamentos a otras personas.",
+    text: "Un medicamento que sirvio a una persona puede no ser adecuado para otra, incluso con sintomas parecidos."
+  },
+  {
+    title: "Almacena correctamente.",
+    text: "Mantenlos en su envase original, lejos de humedad, calor, luz intensa y fuera del alcance de ninos."
   },
   {
     title: "Respeta la dosis indicada.",
     text: "Usa la cantidad, frecuencia y duracion recomendada por tu profesional de salud o por el envase."
   },
   {
-    title: "No combines medicamentos sin orientacion.",
-    text: "Algunos productos pueden duplicar principios activos o aumentar riesgos al mezclarse."
-  },
-  {
-    title: "Conserva los medicamentos correctamente.",
-    text: "Mantenlos en su envase original, lejos de humedad, calor y fuera del alcance de ninos."
-  },
-  {
-    title: "Revisa fechas de vencimiento.",
-    text: "No uses medicamentos vencidos, alterados, abiertos indebidamente o sin identificacion clara."
-  },
-  {
     title: "Consulta al quimico farmaceutico.",
-    text: "Pide orientacion si tienes dudas sobre dosis, interacciones, duplicidades o efectos no esperados."
+    text: "Pide orientacion si tienes dudas sobre dosis, interacciones, duplicidades, efectos no esperados o condiciones de venta."
   }
 ];
 
@@ -42,10 +45,43 @@ export default function UsoRacionalPage() {
         <section className={styles.hero}>
           <span className={styles.kicker}>Educacion en salud</span>
           <h1>Uso racional de medicamentos</h1>
-          <p>Recomendaciones para usar medicamentos de forma segura, responsable e informada.</p>
+          <p>
+            Informacion educativa para usar medicamentos de forma segura, responsable e informada.
+          </p>
         </section>
 
-        <section className={styles.recommendations}>
+        <section className={styles.posterSection} aria-labelledby="uso-racional-afiche-title">
+          <div className={styles.posterIntro}>
+            <span className={styles.kicker}>Material informativo</span>
+            <h2 id="uso-racional-afiche-title">Guia visual para el uso responsable</h2>
+            <p>
+              Antes de usar un medicamento, revisa su envase, fecha de vencimiento, condiciones de almacenamiento y orientacion profesional cuando corresponda.
+            </p>
+          </div>
+
+          <figure className={styles.posterFrame}>
+            <a
+              href={minsalUsoRacionalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Abrir pagina oficial del MINSAL sobre uso racional de medicamentos"
+            >
+              <Image
+                src="/images/usoracional.png"
+                alt="Infografia Uso racional de medicamentos con recomendaciones sobre embarazo, fecha de vencimiento, no recomendar medicamentos, almacenamiento y mantener fuera del alcance de ninos."
+                width={1342}
+                height={896}
+                className={styles.posterImage}
+                priority
+              />
+            </a>
+            <figcaption>
+              Infografia educativa sobre uso racional de medicamentos. Haz clic en la imagen para revisar la informacion oficial del MINSAL.
+            </figcaption>
+          </figure>
+        </section>
+
+        <section className={styles.recommendations} aria-label="Recomendaciones de uso racional">
           {recommendations.map((item, index) => (
             <article className={styles.recommendation} key={item.title}>
               <span className={styles.number}>{index + 1}</span>
@@ -55,6 +91,13 @@ export default function UsoRacionalPage() {
               </div>
             </article>
           ))}
+        </section>
+
+        <section className={styles.notice}>
+          <h2>Informacion educativa</h2>
+          <p>
+            Este contenido no reemplaza la atencion medica ni la orientacion del quimico farmaceutico. No te automediques. Consulta siempre si tienes enfermedades de base, embarazo, lactancia, uso de otros medicamentos o sintomas persistentes.
+          </p>
         </section>
 
         <section className={styles.cta}>
