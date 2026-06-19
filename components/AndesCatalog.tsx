@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import { AndesProductCard } from "@/components/AndesProductCard";
 import type { AndesProduct } from "@/data/productos";
@@ -52,6 +52,8 @@ export function AndesCatalog({
   const [sortBy, setSortBy] = useState("destacados");
   const [page, setPage] = useState(1);
   const [bioFilter, setBioFilter] = useState<"todos" | "bio">("todos");
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setCategory(getCategoryFromSlug(categories, initialCategory));
@@ -73,6 +75,7 @@ export function AndesCatalog({
 
   function updateCategory(value: string) {
     setCategory(value);
+    setIsCategoryOpen(false);
     setPage(1);
   }
 
@@ -184,6 +187,31 @@ export function AndesCatalog({
   }, [query, category, selectedConditions, sortBy, bioFilter]);
 
   useEffect(() => {
+    function handleDocumentPointerDown(event: PointerEvent) {
+      if (
+        categoryDropdownRef.current &&
+        !categoryDropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsCategoryOpen(false);
+      }
+    }
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsCategoryOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handleDocumentPointerDown);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("pointerdown", handleDocumentPointerDown);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
+  useEffect(() => {
     // Ensure current page is within bounds when totalPages changes
     setPage((p) => Math.min(p, totalPages));
   }, [totalPages]);
@@ -197,21 +225,51 @@ export function AndesCatalog({
     <div className={styles.catalogLayout}>
       <section className={styles.productArea} aria-label="Listado de productos">
         <div className={styles.catalogFilters} aria-label="Filtros de productos">
-          <label className={styles.filterSelectWrap}>
-            <span>Categorias</span>
-            <select
-              className={styles.categorySelect}
-              value={category}
-              aria-label="Filtrar por categoria"
-              onChange={(event) => updateCategory(event.target.value)}
-            >
-              {["Todos", ...categories].map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div
+            ref={categoryDropdownRef}
+            className={styles.filterSelectWrap}
+            onPointerLeave={() => setIsCategoryOpen(false)}
+          >
+            <span id="category-filter-label">Categorías</span>
+            <div className={styles.categoryDropdown}>
+              <button
+                type="button"
+                className={styles.categorySelect}
+                aria-haspopup="listbox"
+                aria-expanded={isCategoryOpen}
+                aria-labelledby="category-filter-label category-filter-value"
+                onClick={() => setIsCategoryOpen((isOpen) => !isOpen)}
+              >
+                <span id="category-filter-value">{category}</span>
+                <span className={styles.categoryChevron} aria-hidden="true" />
+              </button>
+
+              {isCategoryOpen ? (
+                <div
+                  className={styles.categoryMenu}
+                  role="listbox"
+                  aria-labelledby="category-filter-label"
+                >
+                  {["Todos", ...categories].map((item) => (
+                    <button
+                      key={item}
+                      type="button"
+                      className={
+                        item === category
+                          ? styles.categoryOptionActive
+                          : styles.categoryOption
+                      }
+                      role="option"
+                      aria-selected={item === category}
+                      onClick={() => updateCategory(item)}
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </div>
 
           <label className={styles.bioSelectWrap}>
             <span className="sr-only">Bioequivalentes</span>

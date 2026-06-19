@@ -3599,7 +3599,7 @@ h1 {
 
 .andes-brand {
   display: inline-flex;
-  width: clamp(210px, 19vw, 248px);
+  width: clamp(152px, 14vw, 184px);
   align-items: center;
   flex: 0 0 auto;
 }
@@ -5648,7 +5648,7 @@ h1 {
   }
 
   .andes-brand {
-    width: min(130px, 42vw);
+    width: min(116px, 38vw);
   }
 
   .andes-header-actions {
@@ -6563,9 +6563,44 @@ h1 {
   white-space: nowrap;
 }
 
-.andes-nav-dropdown-trigger span {
-  font-size: 12px;
-  line-height: 1;
+.andes-nav-dropdown-chevron {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  transition:
+    background 0.18s ease,
+    transform 0.18s ease;
+}
+
+.andes-nav-dropdown-chevron::before,
+.andes-nav-dropdown-chevron::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  width: 7px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 999px;
+}
+
+.andes-nav-dropdown-chevron::before {
+  left: 4px;
+  transform: rotate(45deg);
+}
+
+.andes-nav-dropdown-chevron::after {
+  right: 4px;
+  transform: rotate(-45deg);
+}
+
+.andes-nav-dropdown:hover .andes-nav-dropdown-chevron,
+.andes-nav-dropdown:focus-within .andes-nav-dropdown-chevron {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(180deg);
 }
 
 .andes-nav-dropdown-menu {
@@ -6645,7 +6680,7 @@ h1 {
   }
 
   .andes-brand {
-    width: min(124px, 40vw);
+    width: min(108px, 36vw);
   }
 
   .andes-header {

@@ -1,7 +1,9 @@
 import { farmacia } from "@/data/site";
 import type { Product } from "@/types/product";
 
-export function buildProductWhatsappUrl(product: Product) {
+export function buildProductWhatsappUrl(
+  product: Pick<Product, "nombre" | "formato" | "marca" | "categoria">
+) {
   const message = [
     `Hola ${farmacia.nombre}, quiero consultar por este producto:`,
     `${product.nombre} - ${product.formato}`,

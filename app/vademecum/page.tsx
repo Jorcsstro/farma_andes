@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 
-import { AndesVademecumSection } from "@/components/AndesVademecumSection";
+import {
+  AndesVademecumSection,
+  type VademecumListEntry
+} from "@/components/AndesVademecumSection";
 import styles from "@/components/AndesInternal.module.css";
 import { getVademecumEntries } from "@/lib/vademecum";
+import type { VademecumEntry } from "@/data/vademecum";
 
 export const metadata: Metadata = {
   title: "Vademecum Farmacia Andes | Informacion de medicamentos",
@@ -10,6 +14,38 @@ export const metadata: Metadata = {
 };
 
 export const revalidate = 300;
+
+function normalizeEntryText(value: string) {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function toVademecumListEntry(entry: VademecumEntry): VademecumListEntry {
+  return {
+    id: entry.id,
+    slug: entry.slug,
+    nombre: entry.nombre,
+    categoria: entry.categoria,
+    categoriaTerapeutica: entry.categoriaTerapeutica,
+    descripcion: entry.descripcion,
+    usosComunes: entry.usosComunes.slice(0, 3),
+    searchText: normalizeEntryText(
+      [
+        entry.nombre,
+        entry.principioActivo,
+        entry.categoria,
+        entry.categoriaTerapeutica,
+        entry.descripcion,
+        entry.tipo,
+        ...entry.usosComunes
+      ]
+        .filter(Boolean)
+        .join(" ")
+    )
+  };
+}
 
 export default async function VademecumPage() {
   const entries = await getVademecumEntries();
@@ -32,7 +68,7 @@ export default async function VademecumPage() {
           </p>
         </section>
 
-        <AndesVademecumSection entries={entries} />
+        <AndesVademecumSection entries={entries.map(toVademecumListEntry)} />
       </div>
     </main>
   );

@@ -50,8 +50,8 @@ export function Header() {
         <Image
           src="/identidad-visual/02%20Horizontal%20Blanco%20Naranjo.png"
           alt="Farmacia Andes"
-          width={188}
-          height={48}
+          width={160}
+          height={41}
           priority
         />
       </Link>
@@ -71,7 +71,7 @@ export function Header() {
             className={getNavClass(isProductsActive, "andes-nav-dropdown-trigger")}
             aria-current={isProductsActive ? "page" : undefined}
           >
-            Productos <span aria-hidden="true">⌄</span>
+            Categorías <span className="andes-nav-dropdown-chevron" aria-hidden="true" />
           </Link>
 
           <div className="andes-nav-dropdown-menu">
