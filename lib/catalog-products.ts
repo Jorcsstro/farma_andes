@@ -5,8 +5,6 @@ import { getProductSlug } from "@/lib/product-slug";
 import type { Product } from "@/types/product";
 import type { AndesProduct } from "@/data/productos";
 
-export { getProductSlug as slugifyProduct } from "@/lib/product-slug";
-
 export function mapProductToAndesProduct(product: Product): AndesProduct {
   const slug = getProductSlug(product);
 
