@@ -3645,7 +3645,7 @@ h1 {
 
 .andes-nav a:hover::after,
 .andes-nav a:focus-visible::after,
-.andes-nav a:first-child::after {
+.andes-nav a.is-active::after {
   opacity: 1;
   transform: scaleX(1);
 }
@@ -3977,28 +3977,41 @@ h1 {
   margin-top: 34px;
 }
 
-
-.andes-trust-row span {
-  position: relative;
+.andes-trust-item {
   display: grid;
-  min-width: 120px;
-  grid-template-columns: 28px minmax(0, 1fr);
-  column-gap: 10px;
+  min-width: 128px;
+  grid-template-columns: 32px minmax(0, 1fr);
+  column-gap: 11px;
+  align-items: center;
   color: rgba(255, 255, 255, 0.92);
   font-size: 13px;
   line-height: 1.2;
 }
 
-.andes-trust-row span::before {
-  content: "";
-  width: 28px;
-  height: 28px;
-  grid-row: span 2;
-  background:
-    radial-gradient(circle at 50% 50%, transparent 36%, #ffffff 38% 56%, transparent 58%),
-    linear-gradient(135deg, transparent 42%, #ffffff 43% 57%, transparent 58%);
-  border: 2px solid rgba(255, 255, 255, 0.88);
-  border-radius: 9px;
+.andes-trust-icon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.46);
+  border-radius: 10px;
+}
+
+.andes-trust-icon svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.andes-trust-text {
+  display: grid;
+  gap: 1px;
 }
 
 .andes-trust-row b {
@@ -5242,6 +5255,7 @@ h1 {
 }
 
 .andes-product-card {
+  position: relative;
   display: grid;
   min-width: 0;
   overflow: hidden;
@@ -5253,6 +5267,18 @@ h1 {
     border-color 0.18s ease,
     transform 0.18s ease,
     box-shadow 0.18s ease;
+}
+
+.andes-product-card-link {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.andes-product-card-link:focus-visible {
+  outline: 3px solid rgba(245, 130, 0, 0.34);
+  outline-offset: -3px;
 }
 
 .andes-product-card:hover {
@@ -5364,6 +5390,8 @@ h1 {
 }
 
 .andes-product-button {
+  position: relative;
+  z-index: 2;
   display: inline-flex;
   min-height: 38px;
   align-items: center;
@@ -5611,14 +5639,16 @@ h1 {
   .andes-header {
     width: 100%;
     margin-top: 0;
-    padding: 8px 16px 8px;
+    min-height: auto;
+    gap: 6px 10px;
+    padding: 10px 14px 6px;
     border-right: 0;
     border-left: 0;
     border-radius: 0;
   }
 
   .andes-brand {
-    width: 154px;
+    width: min(130px, 42vw);
   }
 
   .andes-header-actions {
@@ -5627,8 +5657,10 @@ h1 {
 
   .andes-whatsapp-pill {
     width: auto;
-    padding: 10px 14px;
-    font-size: 13px;
+    min-height: 34px;
+    padding: 8px 11px;
+    font-size: 0.8rem;
+    line-height: 1.1;
   }
 
   .andes-whatsapp-pill img {
@@ -5636,16 +5668,19 @@ h1 {
   }
 
   .andes-nav {
-    gap: 12px;
+    gap: 10px;
     width: 100%;
     max-width: 100vw;
+    min-height: 32px;
+    align-items: center;
+    padding-top: 2px;
     padding-bottom: 0;
-    font-size: 12px;
+    font-size: 11.5px;
     white-space: nowrap;
   }
 
   .andes-nav a {
-    padding: 8px 0 10px;
+    padding: 6px 0 8px;
   }
 
   .andes-hero {
@@ -5668,7 +5703,7 @@ h1 {
   }
 
   .andes-hero-content {
-    padding: 42px 0 74px;
+    padding: 34px 0 64px;
   }
 
   .andes-hero h1 {
@@ -5681,9 +5716,31 @@ h1 {
   }
 
   .andes-search {
-    grid-template-columns: 40px minmax(0, 1fr);
-    min-height: 50px;
-    border-radius: 22px;
+    grid-template-columns: 38px minmax(0, 1fr);
+    min-height: 48px;
+    border-radius: 20px;
+  }
+
+  .andes-search-wrap {
+    margin-top: 18px;
+  }
+
+  .andes-search span::before {
+    top: 15px;
+    left: 16px;
+    width: 11px;
+    height: 11px;
+  }
+
+  .andes-search span::after {
+    top: 27px;
+    left: 27px;
+    width: 7px;
+  }
+
+  .andes-search input {
+    padding-right: 14px;
+    font-size: 14px;
   }
 
   .andes-search button {
@@ -5697,7 +5754,30 @@ h1 {
   }
 
   .andes-trust-row {
-    gap: 14px;
+    gap: 10px 12px;
+    margin-top: 24px;
+  }
+
+  .andes-trust-item {
+    min-width: min(100%, 145px);
+    grid-template-columns: 30px minmax(0, 1fr);
+    column-gap: 9px;
+    font-size: 12px;
+  }
+
+  .andes-trust-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+  }
+
+  .andes-trust-icon svg {
+    width: 19px;
+    height: 19px;
+  }
+
+  .andes-trust-row b {
+    font-size: 13px;
   }
 
   .andes-category-strip {
@@ -6565,17 +6645,22 @@ h1 {
   }
 
   .andes-brand {
-    width: 138px;
+    width: min(124px, 40vw);
   }
 
   .andes-header {
     grid-template-columns: minmax(0, 1fr) auto;
-    padding-right: 12px;
-    padding-left: 12px;
+    padding: 8px 12px 6px;
+  }
+
+  .andes-whatsapp-pill {
+    min-height: 32px;
+    padding: 7px 10px;
+    font-size: 0.78rem;
   }
 
   .andes-nav {
-    gap: 14px;
+    gap: 10px;
     font-size: 11px;
   }
 

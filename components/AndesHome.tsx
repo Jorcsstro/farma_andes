@@ -12,7 +12,6 @@ import { getProductImageUrl } from "@/lib/product-image-overrides";
 import { buildProductWhatsappUrl } from "@/lib/whatsapp";
 import { getProductSlug } from "@/lib/product-slug";
 import type { Product } from "@/types/product";
-import { Footer } from "@/components/Footer";
 
 type AndesHomeProps = {
   products: Product[];
@@ -24,6 +23,12 @@ type CategoryCard = {
   subtitle: string;
   icon: "kit" | "bottle" | "heart" | "truck";
   terms: string[];
+};
+
+type TrustBenefit = {
+  title: string;
+  description: string;
+  icon: "quality" | "price" | "care";
 };
 
 const categoryCards: CategoryCard[] = [
@@ -55,6 +60,12 @@ const categoryCards: CategoryCard[] = [
     icon: "truck",
     terms: []
   }
+];
+
+const trustBenefits: TrustBenefit[] = [
+  { title: "Productos", description: "de calidad", icon: "quality" },
+  { title: "Precios", description: "competitivos", icon: "price" },
+  { title: "Atención", description: "cercana y confiable", icon: "care" },
 ];
 
 const quickFilters = [
@@ -252,19 +263,49 @@ function Icon({ name }: { name: CategoryCard["icon"] }) {
   );
 }
 
+function TrustIcon({ name }: { name: TrustBenefit["icon"] }) {
+  if (name === "price") {
+    return (
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M5 8h12l10 10-9 9L8 17V8Z" />
+        <path d="M11 12h.01M18 13l-5 5M19 19l-.01.01M13 13l.01.01" />
+      </svg>
+    );
+  }
+
+  if (name === "care") {
+    return (
+      <svg viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M6 17v-5a5 5 0 0 1 10 0 5 5 0 0 1 10 0v5" />
+        <path d="M5 17h22v3a5 5 0 0 1-5 5H10a5 5 0 0 1-5-5v-3Z" />
+        <path d="M12 17v4M20 17v4" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M16 4 26 8v7c0 6-4 10-10 13C10 25 6 21 6 15V8l10-4Z" />
+      <path d="m11 16 3 3 7-8" />
+    </svg>
+  );
+}
+
 function ProductTile({ product }: { product: Product }) {
   const imageUrl = getProductImageUrl(product);
   const isExternalImage = imageUrl.startsWith("http");
   const hasPrice = product.precio > 0;
+  const productHref = `/productos/${getProductSlug(product)}`;
 
   return (
     <article className="andes-product-card">
-      <a
-        className="andes-product-image"
-        href={buildProductWhatsappUrl(product)}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <Link
+        className="andes-product-card-link"
+        href={productHref}
+        aria-label={`Ver detalle de ${product.nombre}`}
+      />
+
+      <div className="andes-product-image">
         <Image
           src={imageUrl}
           alt={product.nombre}
@@ -274,7 +315,7 @@ function ProductTile({ product }: { product: Product }) {
         />
 
         {product.precioAnterior && <span>Oferta</span>}
-      </a>
+      </div>
 
       <div className="andes-product-info">
         <p>{product.categoria}</p>
@@ -423,10 +464,26 @@ export function AndesHome({ products }: AndesHomeProps) {
   // Estado del catálogo — independiente del buscador
   const [activeFilter, setActiveFilter] = useState("todos");
   const [catalogQuery, setCatalogQuery] = useState("");
+  const [isMobile, setIsMobile] = useState(false);
 
   // Montar en cliente (necesario para portal)
   useEffect(() => {
     setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+
+    const handleChange = () => {
+      setIsMobile(mediaQuery.matches);
+    };
+
+    handleChange();
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
   }, []);
 
   const router = useRouter();
@@ -512,7 +569,9 @@ export function AndesHome({ products }: AndesHomeProps) {
   }, [products, searchQuery]);
 
   const isCatalogFiltering = activeFilter !== "todos" || catalogQuery.trim().length > 0;
-  const catalogProducts = isCatalogFiltering ? filteredProducts : featuredProducts;
+  const catalogProducts = (
+    isCatalogFiltering ? filteredProducts : featuredProducts
+  ).slice(0, isMobile ? 4 : 12);
 
   const winterSeasonProducts = useMemo(
     () =>
@@ -688,20 +747,17 @@ export function AndesHome({ products }: AndesHomeProps) {
                 className="andes-trust-row"
                 aria-label="Beneficios de Farmacia Andes"
               >
-                <span>
-                  <b>Productos</b>
-                  de calidad
-                </span>
-
-                <span>
-                  <b>Precios</b>
-                  competitivos
-                </span>
-
-                <span>
-                  <b>Atención</b>
-                  cercana y confiable
-                </span>
+                {trustBenefits.map((benefit) => (
+                  <span className="andes-trust-item" key={benefit.icon}>
+                    <span className="andes-trust-icon">
+                      <TrustIcon name={benefit.icon} />
+                    </span>
+                    <span className="andes-trust-text">
+                      <b>{benefit.title}</b>
+                      {benefit.description}
+                    </span>
+                  </span>
+                ))}
               </div>
             </div>
           </div>
@@ -982,12 +1038,6 @@ export function AndesHome({ products }: AndesHomeProps) {
         
         
       </main>
-      <Footer />
-
-      
-      
-
-      
     </div>
   );
 }

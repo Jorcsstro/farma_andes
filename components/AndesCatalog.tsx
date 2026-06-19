@@ -195,57 +195,43 @@ export function AndesCatalog({
 
   return (
     <div className={styles.catalogLayout}>
-      <aside className={styles.sidebar} aria-label="Filtros de productos">
-        <div className={styles.sidebarGroup}>
-          <h2>Categorías</h2>
+      <section className={styles.productArea} aria-label="Listado de productos">
+        <div className={styles.catalogFilters} aria-label="Filtros de productos">
+          <label className={styles.filterSelectWrap}>
+            <span>Categorias</span>
+            <select
+              className={styles.categorySelect}
+              value={category}
+              aria-label="Filtrar por categoria"
+              onChange={(event) => updateCategory(event.target.value)}
+            >
+              {["Todos", ...categories].map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          </label>
 
-          <div className={styles.sidebarList}>
-            {["Todos", ...categories].map((item) => (
-              <button
-                className={`${styles.sidebarButton} ${
-                  category === item ? styles.sidebarButtonActive : ""
-                }`}
-                key={item}
-                type="button"
-                onClick={() => updateCategory(item)}
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
-        
-        <div className={styles.sidebarGroup}>
-          <h2>Bioequivalentes</h2>
+          <label className={styles.bioSelectWrap}>
+            <span className="sr-only">Bioequivalentes</span>
+            <select
+              className={styles.bioSelect}
+              value={bioFilter}
+              aria-label="Filtrar bioequivalentes"
+              onChange={(event) => {
+                setBioFilter(event.target.value as "todos" | "bio");
+                setPage(1);
+              }}
+            >
+              <option value="todos">Bioequivalente</option>
+              <option value="bio">Solo bioequivalentes</option>
+            </select>
+          </label>
 
-          <div className={styles.sidebarList}>
-            {[
-              { key: "todos", label: "Todos" },
-              { key: "bio", label: "Bioequivalentes" }
-            ].map((item) => (
-              <button
-                className={`${styles.sidebarButton} ${
-                  bioFilter === (item.key as "todos" | "bio") ? styles.sidebarButtonActive : ""
-                }`}
-                key={item.key}
-                type="button"
-                onClick={() => {
-                  setBioFilter(item.key as "todos" | "bio");
-                  setPage(1);
-                }}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className={styles.sidebarGroup}>
-          <h2>Condición de venta</h2>
-
-          <div className={styles.checkboxList}>
+          <div className={styles.conditionFilters} aria-label="Condicion de venta">
             {conditions.map((condition) => (
-              <label key={condition} className={styles.checkboxItem}>
+              <label key={condition} className={styles.conditionChip}>
                 <input
                   type="checkbox"
                   checked={selectedConditions.includes(condition)}
@@ -256,9 +242,6 @@ export function AndesCatalog({
             ))}
           </div>
         </div>
-      </aside>
-
-      <section className={styles.productArea} aria-label="Listado de productos">
         <div className={styles.catalogTools}>
           <div className={styles.fiboSearch}>
             <label className="sr-only" htmlFor="product-fibo-search">
