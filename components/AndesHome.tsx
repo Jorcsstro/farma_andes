@@ -14,7 +14,11 @@ import { getProductSlug } from "@/lib/product-slug";
 import type { Product } from "@/types/product";
 
 type AndesHomeProps = {
-  products: Product[];
+  products: HomeProduct[];
+};
+
+export type HomeProduct = Omit<Product, "descripcionCorta" | "bioequivalente"> & {
+  searchText: string;
 };
 
 type CategoryCard = {
@@ -151,21 +155,11 @@ function normalizeText(value: string) {
     .toLowerCase();
 }
 
-function productText(product: Product) {
-  return normalizeText(
-    [
-      product.nombre,
-      product.categoria,
-      product.marca,
-      product.descripcionCorta,
-      product.formato,
-      product.precioAnterior ? "oferta" : "",
-      product.destacado ? "destacado oferta" : ""
-    ].join(" ")
-  );
+function productText(product: HomeProduct) {
+  return product.searchText;
 }
 
-function matchesTerms(product: Product, terms: string[]) {
+function matchesTerms(product: HomeProduct, terms: string[]) {
   if (!terms.length) return true;
 
   const text = productText(product);
@@ -173,7 +167,7 @@ function matchesTerms(product: Product, terms: string[]) {
   return terms.some((term) => text.includes(normalizeText(term)));
 }
 
-function getProductPriority(product: Product) {
+function getProductPriority(product: HomeProduct) {
   if (productHasImage(product) && product.destacado && product.precioAnterior) return -2;
   if (productHasImage(product) && product.destacado) return -1;
   if (product.destacado && product.precioAnterior) return 0;
@@ -184,13 +178,13 @@ function getProductPriority(product: Product) {
   return 4;
 }
 
-function productHasImage(product: Product) {
+function productHasImage(product: HomeProduct) {
   const imageUrl = getProductImageUrl(product);
 
   return Boolean(imageUrl && !imageUrl.endsWith("/products/receta.svg"));
 }
 
-function isWinterSeasonProduct(product: Product) {
+function isWinterSeasonProduct(product: HomeProduct) {
   if (product.precio <= 0) {
     return false;
   }
@@ -200,7 +194,7 @@ function isWinterSeasonProduct(product: Product) {
   return winterSeasonTerms.some((term) => text.includes(normalizeText(term)));
 }
 
-function getWinterProductPriority(product: Product) {
+function getWinterProductPriority(product: HomeProduct) {
   const text = productText(product);
   const matchedPriority = winterPriorityTerms.findIndex((term) =>
     text.includes(normalizeText(term))
@@ -291,7 +285,7 @@ function TrustIcon({ name }: { name: TrustBenefit["icon"] }) {
   );
 }
 
-function ProductTile({ product }: { product: Product }) {
+function ProductTile({ product }: { product: HomeProduct }) {
   const imageUrl = getProductImageUrl(product);
   const isExternalImage = imageUrl.startsWith("http");
   const hasPrice = product.precio > 0;
@@ -347,7 +341,7 @@ function ProductTile({ product }: { product: Product }) {
   );
 }
 
-function WinterSeasonCarousel({ products }: { products: Product[] }) {
+function WinterSeasonCarousel({ products }: { products: HomeProduct[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
 
   function scrollByCard(direction: -1 | 1) {

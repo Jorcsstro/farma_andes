@@ -4,11 +4,21 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { AndesSearch } from "@/components/AndesSearch";
-import type { VademecumEntry } from "@/data/vademecum";
 import styles from "@/components/AndesInternal.module.css";
 
 type AndesVademecumSectionProps = {
-  entries: VademecumEntry[];
+  entries: VademecumListEntry[];
+};
+
+export type VademecumListEntry = {
+  id: string;
+  slug: string;
+  nombre: string;
+  categoria: string;
+  categoriaTerapeutica?: string;
+  descripcion: string;
+  usosComunes: string[];
+  searchText: string;
 };
 
 const ENTRIES_PER_PAGE = 18;
@@ -18,27 +28,6 @@ function normalize(value: string) {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase();
-}
-
-function buildSearchableEntry(entry: VademecumEntry) {
-  return [
-    entry.nombre,
-    entry.principioActivo,
-    entry.categoria,
-    entry.categoriaTerapeutica,
-    entry.descripcion,
-    entry.tipo,
-    ...(entry.usosComunes ?? []),
-    ...(entry.advertencias ?? []),
-    ...(entry.consultaFarmaceutica ?? []),
-    ...(entry.contraindicacionesGenerales ?? []),
-    ...(entry.interaccionesGenerales ?? []),
-    entry.embarazoLactancia,
-    entry.adultoMayor,
-    entry.ninos
-  ]
-    .filter(Boolean)
-    .join(" ");
 }
 
 function getPaginationItems(currentPage: number, totalPages: number) {
@@ -80,7 +69,7 @@ export function AndesVademecumSection({ entries }: AndesVademecumSectionProps) {
 
     if (!normalizedQuery) return entries;
 
-    return entries.filter((entry) => normalize(buildSearchableEntry(entry)).includes(normalizedQuery));
+    return entries.filter((entry) => entry.searchText.includes(normalizedQuery));
   }, [entries, query]);
 
   const totalPages = Math.max(1, Math.ceil(filteredEntries.length / ENTRIES_PER_PAGE));

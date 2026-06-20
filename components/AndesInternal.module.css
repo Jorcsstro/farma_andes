@@ -171,7 +171,6 @@
   font-weight: 950;
 }
 
-.filterSelectWrap::after,
 .bioSelectWrap::after {
   content: "";
   position: absolute;
@@ -185,17 +184,12 @@
   transform: rotate(45deg);
 }
 
-.filterSelectWrap::after {
-  color: #003b91;
-}
-
 .bioSelectWrap::after {
   right: 18px;
   bottom: 20px;
   color: #ff2b4f;
 }
 
-.categorySelect,
 .bioSelect {
   width: 100%;
   min-width: 0;
@@ -203,16 +197,38 @@
   outline: 0;
 }
 
+.categoryDropdown {
+  position: relative;
+  min-width: 0;
+}
+
+.categoryDropdown::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -8px;
+  left: 0;
+  height: 8px;
+}
+
 .categorySelect {
+  display: flex;
   min-height: 54px;
+  width: 100%;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   padding: 0 46px 0 16px;
   color: #003b91;
   font-size: 14px;
   font-weight: 950;
+  text-align: left;
   background: #ffffff;
   border: 1px solid rgba(0, 59, 145, 0.14);
   border-radius: 8px;
   box-shadow: 0 10px 26px rgba(0, 38, 92, 0.06);
+  outline: 0;
 }
 
 .categorySelect:focus-visible {
@@ -220,7 +236,88 @@
   box-shadow: 0 0 0 4px rgba(0, 59, 145, 0.11);
 }
 
+.categorySelect[aria-expanded="true"] .categoryChevron {
+  transform: rotate(180deg);
+}
+
+.categoryChevron {
+  position: absolute;
+  right: 16px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #eef5ff;
+  transition: transform 0.18s ease;
+}
+
+.categoryChevron::before,
+.categoryChevron::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  width: 7px;
+  height: 2px;
+  background: #003b91;
+  border-radius: 999px;
+}
+
+.categoryChevron::before {
+  left: 4px;
+  transform: rotate(45deg);
+}
+
+.categoryChevron::after {
+  right: 4px;
+  transform: rotate(-45deg);
+}
+
+.categoryMenu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  left: 0;
+  z-index: 30;
+  display: grid;
+  max-height: 292px;
+  overflow-y: auto;
+  padding: 8px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 59, 145, 0.12);
+  border-radius: 10px;
+  box-shadow: 0 18px 42px rgba(0, 38, 92, 0.16);
+}
+
+.categoryOption,
+.categoryOptionActive {
+  width: 100%;
+  min-height: 40px;
+  padding: 10px 11px;
+  color: #405069;
+  font-size: 13px;
+  font-weight: 850;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+}
+
+.categoryOption:hover,
+.categoryOption:focus-visible {
+  color: #003b91;
+  background: #f4f8ff;
+  outline: 0;
+}
+
+.categoryOptionActive {
+  color: #003b91;
+  background: #eef5ff;
+}
+
 .bioSelect {
+  width: 100%;
+  min-width: 0;
+  appearance: none;
+  outline: 0;
   min-height: 54px;
   padding: 0 46px 0 16px;
   color: #ff2b4f;
